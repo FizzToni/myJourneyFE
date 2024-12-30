@@ -56,7 +56,7 @@ onMounted(() => {
 </script>
 
 <template>
-  <div class="main-background">
+  <div class="main-background bg-gradient-to-br from-green-100 via-white to-blue-100">
     <!-- Banner -->
     <div>
       <header class="flex banner">
@@ -101,7 +101,7 @@ onMounted(() => {
   margin-top: -30px;
 }
 .main-background{
-  background: linear-gradient(to bottom right, #cffdff, rgb(199, 255, 223));
+
   min-height: 100vh; /* Ensure it covers the entire viewport */
   padding: 0;
   margin: 0;
