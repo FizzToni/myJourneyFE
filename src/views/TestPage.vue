@@ -22,7 +22,7 @@ const fetchVaccines = async () => {
   const requestBody = { name: inputValue.value };
 
   try {
-    const response = await fetch('https://n8n.tonii.at/webhook-test/getVaccine', {
+    const response = await fetch('https://n8n.tonii.at/webhook/getVaccine', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -54,7 +54,7 @@ const fetchAllVaccines = async () => {
   errorMessage.value = '';
 
   try {
-    const response = await fetch('https://n8n.tonii.at/webhook-test/getAllVaccine', {
+    const response = await fetch('https://n8n.tonii.at/webhook/getAllVaccine', {
       method: 'GET',
     });
 
