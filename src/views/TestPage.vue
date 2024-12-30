@@ -159,32 +159,23 @@ watch(inputValue, () => {
 
 
   <Command>
-    <CommandInput placeholder="Type a command or search..." />
+    <CommandInput placeholder="Search..." />
     <CommandList>
       <CommandEmpty>No results found.</CommandEmpty>
-      <CommandGroup heading="Suggestions">
-        <CommandItem value="calendar">
-          Calendar
-        </CommandItem>
-        <CommandItem value="search-emoji">
-          Search Emoji
-        </CommandItem>
-        <CommandItem value="calculator">
-          Calculator
+      <CommandGroup heading="Vaccinations">
+        <CommandItem value="Vaccination1">
+          Vaccination1
         </CommandItem>
       </CommandGroup>
+
       <CommandSeparator />
-      <CommandGroup heading="Settings">
-        <CommandItem value="profile">
-          Profile
-        </CommandItem>
-        <CommandItem value="billing">
-          Billing
-        </CommandItem>
-        <CommandItem value="settings">
-          Settings
+
+      <CommandGroup heading="Node">
+        <CommandItem value="Node1">
+          Node1
         </CommandItem>
       </CommandGroup>
+
     </CommandList>
   </Command>
 
