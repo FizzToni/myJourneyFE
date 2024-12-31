@@ -31,8 +31,7 @@ interface Journey {
 }
 
 const searchResults = ref<{ vaccines: Vaccine[]; journeys: Journey[] }>({ vaccines: [], journeys: [] })
-const searchQuery = ref('')
-console.log(searchQuery)
+const searchQuery = ref('start')
 
 const fetchSearchResults = async (query: string) => {
   console.log("fetchSearchResults called with query:", query);
