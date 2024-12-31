@@ -8,8 +8,7 @@ import {
   CommandList,
   CommandSeparator,
 } from '@/components/ui/command'
-import {onMounted, ref, watch} from 'vue'
-import axios from 'axios'
+import { ref, watch } from 'vue'
 
 // Define the types for vaccine and journey
 interface Vaccine {
@@ -30,35 +29,36 @@ interface Journey {
   status?: string
   nodes?: Array<Record<string, any>>
 }
-onMounted(() => {
-  console.log('Component initialized');
-});
 
-// Reactive variables for the search data and input
 const searchResults = ref<{ vaccines: Vaccine[]; journeys: Journey[] }>({ vaccines: [], journeys: [] })
 const searchQuery = ref('')
+console.log(searchQuery)
 
-// Function to fetch data from the API
 const fetchSearchResults = async (query: string) => {
-  console.log("hello world");
+  console.log("fetchSearchResults called with query:", query);
   try {
     console.log(query);
-    const response = await axios.get(`https://n8n.tonii.at/webhook/globalSearch?id=676d90abf0b5e780569b7bde&name=${query}`)
-    // Assuming response.data contains the array of results
-    searchResults.value = {
-      vaccines: response.data.flatMap((item: { vaccines?: Vaccine[] }) => item.vaccines || []),
-      journeys: response.data.flatMap((item: { journeys?: Journey[] }) => item.journeys || []),
+    const response = await fetch(`https://n8n.tonii.at/webhook/globalSearch?id=676d90abf0b5e780569b7bde&name=${query}`);
+
+    if (response.ok) {
+      const data = await response.json();
+      // Process the data and update searchResults
+      searchResults.value = {
+        vaccines: data.flatMap((item: { vaccines?: Vaccine[] }) => item.vaccines || []),
+        journeys: data.flatMap((item: { journeys?: Journey[] }) => item.journeys || []),
+      }
+    } else {
+      throw new Error('Error fetching search results');
     }
   } catch (error) {
     console.error('Error fetching search results:', error)
   }
 }
 
-// Watch for input changes to fetch data
 watch(searchQuery, (newQuery) => {
-  console.log("New query value:", newQuery); // Prüfe den neuen Wert
+  console.log("New query value:", newQuery);
   if (newQuery.trim()) {
-    fetchSearchResults(newQuery)
+    fetchSearchResults(newQuery);
   } else {
     searchResults.value = { vaccines: [], journeys: [] }
   }
@@ -68,6 +68,7 @@ watch(searchQuery, (newQuery) => {
 <template>
   <Command>
     <CommandInput v-model="searchQuery" placeholder="Search for vaccines or journeys..." />
+
     <CommandList>
       <CommandEmpty>No results found.</CommandEmpty>
 
@@ -86,6 +87,7 @@ watch(searchQuery, (newQuery) => {
       </CommandGroup>
     </CommandList>
   </Command>
+  <p>Suchbegriff: {{ searchQuery }}</p>
 </template>
 
 <style scoped>
