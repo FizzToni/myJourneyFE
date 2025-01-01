@@ -37,9 +37,16 @@ const router = useRouter();
 // Function to navigate and set the active item
 const navigateTo = (route: string, label: string) => {
   activeItem.value = label; // Update the active item
-  router.push(route); // Navigate to the route
+
+  // Check if navigating to "/main" and remove parameters
+  if (route === '/main') {
+    window.location.replace('/main'); // Refresh the page
+  } else {
+    router.push(route); // Navigate to the specified route
+  }
 };
 </script>
+
 
 <style scoped>
 .navbar {
