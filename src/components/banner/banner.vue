@@ -22,10 +22,10 @@ defineEmits(['refresh']);
   background: linear-gradient(to bottom right, #0EBE7E, #07D9AD);
   color: white;
   text-align: left;
-  padding: 30px 0;
-  padding-left: 30px;
+  padding: 30px 0 30px 30px;
   font-size: 30px;
   font-weight: bold;
   border-radius: 0 0 20px 20px;
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.2); /* Add shadow */
 }
 </style>
