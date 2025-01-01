@@ -7,6 +7,7 @@ const { user } = storeToRefs(useAccountStore());
 const journeys = ref([]); // Store journey data
 import { useRoute } from 'vue-router';
 import Banner from "@/components/banner/banner.vue";
+import Navbar from "@/components/navbar/Navbar.vue";
 
 const route = useRoute();
 const title = ref();
@@ -16,8 +17,9 @@ async function fetchJourneys() {
     const id = '676c39fd5991fae62fcb1a63'
     const subJourneyId = route.query.journey_id || 0;
     title.value = route.query.title;
-    console.log("title", title)
-    console.log('SubJourney ID:', subJourneyId); // Log or use it for logic
+    if(title.value === undefined){
+      title.value = '';
+    }
 
     //user.value.account_id
     const response = await fetch(`https://n8n.tonii.at/webhook/myjourney?id=${id}&journey_id=${subJourneyId}`, {
@@ -57,12 +59,12 @@ onMounted(() => {
 </script>
 
 <template>
-  <div class="main-background bg-gradient-to-br from-green-100 via-white to-blue-100">
+  <div class="main-container bg-gradient-to-br from-green-100 via-white to-blue-100">
     <!-- Banner -->
     <banner :title="`MyJourney ${title}`"  :on-refresh="fetchJourneys"/>
 
     <!-- Journey List -->
-    <section class="subsection">
+    <section class="scrollable-section">
       <ul v-if="journeys.length > 0">
         <li v-for="(node, index) in journeys" :key="node.id">
           <div class="info-container">
@@ -87,6 +89,7 @@ onMounted(() => {
       </ul>
       <p v-else>No journeys available</p>
     </section>
+    <navbar/>
   </div>
 </template>
 
@@ -94,33 +97,32 @@ onMounted(() => {
 .name{
   margin-top: -30px;
 }
-.main-background{
-
-  min-height: 100vh; /* Ensure it covers the entire viewport */
-  padding: 0;
-  margin: 0;
+.main-container {
+  display: flex;
+  flex-direction: column;
+  height: 100vh; /* Full height of the viewport */
 }
 
-.subsection {
-  margin: 20px;
-  padding: 10px;
-  border-radius: 5px;
-  overflow-y: auto;
-  max-height: 80vh; /* Set a maximum height for the subsection */
+.scrollable-section {
+  flex: 1; /* Allow this section to grow or shrink */
+  overflow-y: auto; /* Enable vertical scrolling */
+  /* Add padding */
+  padding: 15px 15px 100px;
+  margin-bottom: 90px; /* Add space for the navbar height */
 }
-.subsection ul li {
+.scrollable-section ul li {
   font-size: 20px; /* Increase the text size for items */
   color: black;
   font-weight: bold;
 }
 
-.subsection h2 {
+.scrollable-section h2 {
   color: #333;
   font-size: 20px;
   margin-bottom: 10px;
 }
 .material-symbols-outlined {
-  font-family: 'Material Symbols Outlined';
+  font-family: 'Material Symbols Outlined',serif;
   font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 48;
   color: #0EBE7E;
   font-size: 25pt;
