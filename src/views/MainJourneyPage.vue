@@ -6,6 +6,7 @@ import { ref, onMounted } from 'vue';
 const { user } = storeToRefs(useAccountStore());
 const journeys = ref([]); // Store journey data
 import { useRoute } from 'vue-router';
+import Banner from "@/components/banner/banner.vue";
 
 const route = useRoute();
 const title = ref();
@@ -58,14 +59,7 @@ onMounted(() => {
 <template>
   <div class="main-background bg-gradient-to-br from-green-100 via-white to-blue-100">
     <!-- Banner -->
-    <div>
-      <header class="flex banner">
-        <h1>MyJourney: {{title}}</h1>
-        <button class="refresh-button" @click="fetchJourneys">
-          <i class="material-symbols-outlined">refresh</i>
-        </button>
-      </header>
-    </div>
+    <banner :title="`MyJourney ${title}`"  :on-refresh="fetchJourneys"/>
 
     <!-- Journey List -->
     <section class="subsection">
@@ -105,17 +99,6 @@ onMounted(() => {
   min-height: 100vh; /* Ensure it covers the entire viewport */
   padding: 0;
   margin: 0;
-}
-
-.banner {
-  background: linear-gradient(to bottom right, #0EBE7E, #07D9AD);
-  color: white;
-  text-align: left;
-  padding: 30px 0;
-  padding-left: 30px;
-  font-size: 30px;
-  font-weight: bold;
-  border-radius: 0 0 20px 20px;
 }
 
 .subsection {

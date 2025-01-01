@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
+import Banner from "@/components/banner/banner.vue";
 
 const router = useRouter();
 const active = ref([]);
@@ -37,16 +38,9 @@ onMounted(() => {
 </script>
 
 <template>
-  <div class="main-background">
+  <div class="main-background bg-gradient-to-br from-green-100 via-white to-blue-100">
     <!-- Banner -->
-    <div class="flex justify-center banner">
-      <header class="flex justify-between items-center px-4">
-        <h1>History</h1>
-        <button class="refresh-button" @click="fetchData">
-          <i class="material-symbols-outlined">refresh</i>
-        </button>
-      </header>
-    </div>
+    <banner title="History"  :on-refresh="fetchData"/>
 
     <!-- Active Subsection -->
     <section class="subsection">
@@ -80,33 +74,10 @@ onMounted(() => {
 
 <style scoped>
 .main-background{
-  background: linear-gradient(to bottom right, #cffdff, rgb(199, 255, 223));
+
   min-height: 100vh; /* Ensure it covers the entire viewport */
   padding: 0;
   margin: 0;
-}
-.banner {
-  background: linear-gradient(to bottom right, #0EBE7E, #07D9AD);
-  color: white;
-  text-align: center;
-  padding: 30px 0;
-  font-size: 24px;
-  font-weight: bold;
-  border-radius: 0 0 20px 20px;
-}
-
-.refresh-button {
-  background: transparent;
-  border: none;
-  color: white;
-  cursor: pointer;
-  font-size: 24px;
-  transition: transform 0.2s ease, color 0.2s ease;
-}
-
-.refresh-button:hover {
-  transform: rotate(360deg);
-  color: #0BE9A8;
 }
 
 .subsection {
