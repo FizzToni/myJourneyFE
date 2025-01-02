@@ -71,12 +71,6 @@ const handleJourneyClick = (journeyId: number) => {
 <template>
   <Command>
     <CommandInput v-model="searchQuery" placeholder="Search for vaccines or journeys..." />
-    <input
-      v-model="searchQuery"
-      type="text"
-      placeholder="Search for vaccines or journeys..."
-      @input="fetchSearchResults(searchQuery)"
-    />
 
     <CommandList>
       <CommandEmpty>No results found.</CommandEmpty>
@@ -106,7 +100,7 @@ const handleJourneyClick = (journeyId: number) => {
       </CommandGroup>
     </CommandList>
   </Command>
-  <p>Suchbegriff: {{ searchQuery }}</p>
+
 </template>
 
 <style scoped>
