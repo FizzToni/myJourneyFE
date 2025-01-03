@@ -1,5 +1,5 @@
-<script setup>
-import { ref, onMounted } from 'vue'; 
+<script setup lang="ts">
+import { ref, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
 
 const router = useRouter();
@@ -52,10 +52,10 @@ onMounted(() => {
     <section class="subsection">
       <h2>Active</h2>
       <ul v-if="active.length > 0">
-        <li 
-          v-for="item in active" 
-          :key="item.id" 
-          @click="navigateToMyJourney(item.journey_id, item.title)" 
+        <li
+          v-for="item in active"
+          :key="item.id"
+          @click="navigateToMyJourney(item.journey_id, item.title)"
           class="clickable-item"
         >
           {{ item.title }}
@@ -68,7 +68,7 @@ onMounted(() => {
     <section class="subsection">
       <h2>Inactive</h2>
       <ul v-if="inactive.length > 0">
-        <li v-for="item in inactive" :key="item.id" @click="navigateToMyJourney(item.journey_id, item.title)" 
+        <li v-for="item in inactive" :key="item.id" @click="navigateToMyJourney(item.journey_id, item.title)"
         class="clickable-item">
           {{ item.title }}
         </li>

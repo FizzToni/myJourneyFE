@@ -37,6 +37,7 @@ export const useAccountStore = defineStore('account', {
       }
     },
 
+
     async createAccount(email: string, password: string) {
       try {
         const response = await fetch('https://n8n.tonii.at/webhook/create', {
@@ -64,5 +65,10 @@ export const useAccountStore = defineStore('account', {
         throw error;
       }
     },
+
+
+    async setAccountDetails() {
+
+    }
   },
 });
