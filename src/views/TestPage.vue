@@ -43,6 +43,8 @@ async function fetchVaccines() {
 
     boxes.value = [
       { id: vaccines.value.length, description: "Vaccines in total" },
+      { id: 0, description: "Precautions in total" },
+      { id: 0, description: "Medikation in total" },
     ];
   } catch (error) {
     console.error('Error fetching vaccines:', error);
