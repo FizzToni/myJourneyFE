@@ -7,70 +7,88 @@ import {
   CommandItem,
   CommandList,
   CommandSeparator,
-} from '@/components/ui/command'
-import { ref, watch } from 'vue'
+} from '@/components/ui/command';
+import { ref, watch } from 'vue';
 
-// Define the types for vaccine and journey
 interface Vaccine {
-  _id: string
-  name: string
-  manufacturer?: string
-  recommended_age?: number
-  amount_needed?: number
-  dosage_schedule?: string
-  common_sideeffects?: string
-  prevent_desease?: string
-  description?: string
+  _id: string;
+  name: string;
+  manufacturer?: string;
+  recommended_age?: number;
+  amount_needed?: number;
+  dosage_schedule?: string;
+  common_sideeffects?: string;
+  prevent_desease?: string;
+  description?: string;
 }
 
 interface Journey {
-  journey_id: number
-  title: string
-  status?: string
-  nodes?: Array<Record<string, any>>
+  journey_id: number;
+  title: string;
+  status?: string;
+  nodes?: Array<Record<string, any>>;
 }
 
-const searchResults = ref<{ vaccines: Vaccine[]; journeys: Journey[] }>({ vaccines: [], journeys: [] })
-const searchQuery = ref('')
+interface Node {
+  _id: number;
+  name: string;
+  [key: string]: any;
+}
+
+const searchResults = ref<{ vaccines: Vaccine[]; journeys: Journey[]; nodes: Node[] }>({
+  vaccines: [],
+  journeys: [],
+  nodes: [],
+});
+const searchQuery = ref('');
 
 const fetchSearchResults = async (query: string) => {
   try {
-    const response = await fetch(`https://n8n.tonii.at/webhook/globalSearch?id=676d90abf0b5e780569b7bde&name=${query}`);
+    const response = await fetch(`https://n8n.tonii.at/webhook/globalSearch?id=676c39fd5991fae62fcb1a63&name=${query}`);
 
     if (response.ok) {
       const data = await response.json();
       searchResults.value = {
-        vaccines: data.flatMap((item: { vaccines?: Vaccine[] }) => item.vaccines || []),
-        journeys: data.flatMap((item: { journeys?: Journey[] }) => item.journeys || []),
-      }
+        //delete .slice(0,5) for more than 5 hits per search
+        vaccines: data.flatMap((item: { vaccines?: Vaccine[] }) => item.vaccines || []).slice(0, 5),
+        journeys: data.flatMap((item: { journeys?: Journey[] }) => item.journeys || []).slice(0, 5),
+        nodes: data.flatMap((item: { nodes?: Node[] }) => item.nodes || []).filter((node: Node) =>
+          node.name.toLowerCase().includes(query.toLowerCase())
+        ).slice(0, 5),
+      };
     } else {
       throw new Error('Error fetching search results');
     }
   } catch (error) {
-    console.error('Error fetching search results:', error)
+    console.error('Error fetching search results:', error);
   }
-}
+};
 
 watch(searchQuery, (newQuery) => {
   if (newQuery.trim()) {
     fetchSearchResults(newQuery);
   } else {
-    searchResults.value = { vaccines: [], journeys: [] }
+    searchResults.value = { vaccines: [], journeys: [], nodes: [] };
   }
-})
+});
 
 const handleVaccineClick = (vaccineId: string) => {
   console.log('Vaccine ID:', vaccineId);
-}
+};
 
 const handleJourneyClick = (journeyId: number) => {
   console.log('Journey ID:', journeyId);
-}
+};
+
+const handleNodeClick = (nodeId: number, journeyId: number) => {
+  console.log('Node ID:', nodeId);
+  console.log('Journey ID:', journeyId);
+};
 </script>
 
 <template>
   <Command>
-    <CommandInput v-model="searchQuery" placeholder="Search for vaccines or journeys..." />
+    <CommandInput v-model="searchQuery" placeholder="Search for vaccines, journeys, or nodes..." />
 
     <CommandList>
       <CommandEmpty>No results found.</CommandEmpty>
@@ -98,9 +116,21 @@ const handleJourneyClick = (journeyId: number) => {
           {{ journey.title }}
         </CommandItem>
       </CommandGroup>
+
+      <CommandSeparator v-if="(searchResults.vaccines.length || searchResults.journeys.length) && searchResults.nodes.length" />
+
+      <CommandGroup v-if="searchResults.nodes.length" heading="Nodes">
+        <CommandItem
+          v-for="node in searchResults.nodes"
+          :key="node._id"
+          :value="node.name"
+          @click="handleNodeClick(node._id, node.journeyID)"
+        >
+          {{ node.name }}
+        </CommandItem>
+      </CommandGroup>
     </CommandList>
   </Command>
-
 </template>
 
 <style scoped>
