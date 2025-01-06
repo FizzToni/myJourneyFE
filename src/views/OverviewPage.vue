@@ -4,12 +4,14 @@
       <div class="container-content" :style="{ gap: '8px' }">
         <div class="row space-between" :style="{ gap: '8px' }">
           <div class="info">
-            <h2 class="headline">Vaccination Tracker</h2>
+            <div style="display: flex; justify-content: space-between;">
+              <h2 class="headline">Vaccination Tracker</h2>
+              <i class="material-icons">></i>
+            </div>
             <p class="description">
               Keep track of your vaccinations easily and stay informed.
             </p>
           </div>
-          <i class="material-icons">></i>
         </div>
         <div class="row space-between" :style="{ gap: '8px' }">
           <div class="info">
@@ -17,7 +19,7 @@
             <p class="description">View your complete vaccination history.</p>
           </div>
           <div class="info">
-            <h3 class="number">12 new</h3>
+            <p class="number notification">12 new</p>
             <p class="description">
               Discover more insights and recommendations.
             </p>
@@ -206,4 +208,16 @@ export default {
   font-size: 24px;
   color: black;
 }
+
+.notification {
+  font-size: 0.75em;
+  display: inline-block;
+  padding: 2px;
+  background-color: red;
+  color: white;
+  font-weight: bold;
+  border-radius: 8px;
+  white-space: nowrap;
+}
+
 </style>
