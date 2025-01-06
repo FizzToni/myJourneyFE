@@ -9,11 +9,13 @@ import {useRoute, useRouter} from 'vue-router';
 import Banner from "@/components/banner/banner.vue";
 import Navbar from "@/components/navbar/Navbar.vue";
 import Addbutton from "@/components/addbutton/Addbutton.vue";
+import Modal from "@/components/Modal/Modal.vue";
 
 const route = useRoute();
 const router = useRouter();
 const title = ref();
-const status = ref() ;
+const status = ref();
+const isVisible = ref(false);
 
 async function fetchJourneys() {
   try {
@@ -74,6 +76,18 @@ function handleCustomEvent(newStatus: string) {
 onMounted(() => {
   fetchJourneys();
 });
+function handleCreateJourneyEvent() {
+  console.log("Create Journey Event received");
+  isVisible.value = true; // Open the modal
+}
+function openModal() {
+  console.log("open modal");
+  isVisible.value = true;
+}
+function closeModal() {
+  isVisible.value = false;
+}
+
 </script>
 
 <template>
@@ -106,8 +120,8 @@ onMounted(() => {
         </li>
       </ul>
       <p v-else>No journeys available</p>
-      <addbutton class="floating-add-button"  @customEvent="handleCustomEvent"/>
-
+      <addbutton class="floating-add-button"  @customEvent="handleCustomEvent" @createJourney="handleCreateJourneyEvent"/>
+      <modal :on-close="closeModal" :is-visible="isVisible"/>
     </section>
     <navbar/>
   </div>

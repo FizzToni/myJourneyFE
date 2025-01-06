@@ -14,11 +14,16 @@ const id = "676c39fd5991fae62fcb1a63";
 const journey_id = route.query.journey_id;
 
 const emit = defineEmits<{
-  (event: "customEvent", payload: { key: string; value: any }): void;
+  (event: "customEvent", status: string): void;
+  (event: "createJourney", option: boolean): void;
 }>();
-function triggerEvent(newStatus: string) {
+function triggerChangeStatusEvent(newStatus: string) {
 
   emit("customEvent", newStatus); // Emit the event with a payload
+}
+function triggerCreateJourneyEvent(option: boolean) {
+
+  emit("createJourney", option); // Emit the event with a payload
 }
 function toggleOptions() {
   showOptions.value = !showOptions.value;
@@ -28,7 +33,7 @@ function toggleOptions() {
 
 function handleChangeStatus(option: string, status: string) {
   console.log("Clicked option:", option);
-  triggerEvent(status === "active" ? "inactive" : "active");//data[0].status
+  triggerChangeStatusEvent(status === "active" ? "inactive" : "active");//data[0].status
 
   const id = "676c39fd5991fae62fcb1a63"; // Example ID
   const journey_id = route.query.journey_id; // Extract journey_id from the route
@@ -66,12 +71,12 @@ function handleAddNode(option: string) {
   console.log("Clicked Add Node");
 
   // Add logic for adding a node here
-
   showOptions.value = false; // Close options after clicking
 }
 
 function handleCreateJourney(option: string) {
   console.log("Clicked Create Sub-Journey");
+  emit("createJourney", true); // Emit the event with a payload
 
   // Add logic for creating a sub-journey here
 
@@ -106,6 +111,7 @@ const isMainPage = computed(() => route.fullPath.endsWith("/main"));
         <button class="option" @click="handleCreateJourney('Create Sub-Journey')">Create Sub-Journey</button>
       </div>
     </div>
+
   </div>
 </template>
 
