@@ -1,7 +1,4 @@
 <template>
-  <div style="height: 10em">
-    Header
-  </div>
   <div class="safe-area">
     <div class="container" :style="containerStyle">
       <div class="container-content">
