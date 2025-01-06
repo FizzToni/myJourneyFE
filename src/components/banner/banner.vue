@@ -27,7 +27,10 @@ function bannerStyleF(status: string) {
 <template>
   <div>
     <header class="flex banner" :style="bannerStyleF(status)">
-      <h1>{{ title }}</h1>
+      <div class="banner-text">
+        <p class="main-title">MyJourney</p>
+        <p class="sub-title">{{ title }}</p>
+      </div>
       <img
         src="@/assets/avatar.jpg"
         alt="User Profile"
@@ -36,6 +39,7 @@ function bannerStyleF(status: string) {
     </header>
   </div>
 </template>
+
 
 <style scoped>
 .banner {
@@ -46,6 +50,26 @@ function bannerStyleF(status: string) {
   border-radius: 0 0 20px 20px;
   box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.2); /* Add shadow */
   user-select: none;
+  display: flex;
+  align-items: center; /* Vertically align content */
+  justify-content: space-between; /* Space out the text and image */
+}
+
+.banner-text {
+  display: flex;
+  flex-direction: column; /* Stack title and subtitle vertically */
+}
+
+.main-title {
+  font-size: 24px; /* Adjust size for main title */
+  margin: 0; /* Remove default margin */
+  color: inherit; /* Inherit text color from banner */
+}
+
+.sub-title {
+  font-size: 18px; /* Adjust size for subtitle */
+  margin: 0; /* Remove default margin */
+  color: inherit; /* Inherit text color from banner */
 }
 
 .profile-image {

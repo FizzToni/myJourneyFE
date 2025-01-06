@@ -79,7 +79,7 @@ onMounted(() => {
 <template>
   <div class="main-container bg-gradient-to-br from-green-100 via-white to-blue-100">
     <!-- Banner -->
-    <banner :title="`MyJourney ${title}`" :status="`${status}`"  :on-refresh="fetchJourneys"/>
+    <banner :title="`${title}`" :status="`${status}`"  :on-refresh="fetchJourneys"/>
 
     <!-- Journey List -->
     <section class="scrollable-section">
