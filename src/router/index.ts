@@ -3,7 +3,7 @@ import AuthPage from '@/views/AuthPage.vue'
 import MainJourneyPage from '@/views/MainJourneyPage.vue'
 import TestPage from "@/views/TestPage.vue";
 import History from "@/views/History.vue";
-import Overview from '@/views/Overview.vue'
+import OverviewPage from '@/views/OverviewPage.vue'
 
 const routes = [
   { path: '/', redirect: '/login' }, // default to login page
@@ -11,7 +11,7 @@ const routes = [
   { path: '/main', name: 'Main', component: MainJourneyPage },
   { path: '/test', name: 'Test', component: TestPage },
   { path: '/history', name: 'History', component: History },
-  { path: '/overview', name: 'Overview', component: Overview }
+  { path: '/overview', name: 'Overview', component: OverviewPage }
 ]
 
 const router = createRouter({
