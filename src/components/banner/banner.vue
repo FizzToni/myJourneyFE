@@ -2,37 +2,52 @@
 // Define props using the defineProps helper (no need to import)
 defineProps<{
   title: string;
+  status: string; // 'active' or 'inactive'
   onRefresh: () => void;
 }>();
 
-// You can define emitted events similarly if needed
-defineEmits(['refresh']);
+import { computed } from "vue";
+
+// Computed class for dynamic banner styles
+function bannerStyleF(status: string) {
+  console.log("Banner status:", status);
+
+  return status === "inactive"
+    ? {
+      background: "linear-gradient(to bottom right, #ccc, #aaa)", // Gray gradient for inactive
+      color: "#666", // Darker text for contrast
+    }
+    : {
+      background: "linear-gradient(to bottom right, #0EBE7E, #07D9AD)", // Default green gradient
+      color: "white", // White text for default
+    };
+}
 </script>
 
 <template>
   <div>
-    <header class="flex banner">
-      <h1  @click="onRefresh">{{ title }}</h1>
+    <header class="flex banner" :style="bannerStyleF(status)">
+      <h1>{{ title }}</h1>
       <img
-      src="@/assets/avatar.jpg"
-      alt="User Profile"
-      class="profile-image"
-    />
+        src="@/assets/avatar.jpg"
+        alt="User Profile"
+        class="profile-image"
+      />
     </header>
   </div>
 </template>
 
 <style scoped>
 .banner {
-  background: linear-gradient(to bottom right, #0EBE7E, #07D9AD);
-  color: white;
   text-align: left;
   padding: 30px 0 30px 30px;
   font-size: 30px;
   font-weight: bold;
   border-radius: 0 0 20px 20px;
   box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.2); /* Add shadow */
+  user-select: none;
 }
+
 .profile-image {
   width: 60px;
   height: 60px;
@@ -45,5 +60,4 @@ defineEmits(['refresh']);
   margin-top: 20px;
   margin-right: 30px;
 }
-
 </style>

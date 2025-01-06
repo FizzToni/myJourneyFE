@@ -5,22 +5,28 @@ import { ref, onMounted } from 'vue';
 
 const { user } = storeToRefs(useAccountStore());
 const journeys = ref([]); // Store journey data
-import { useRoute } from 'vue-router';
+import {useRoute, useRouter} from 'vue-router';
 import Banner from "@/components/banner/banner.vue";
 import Navbar from "@/components/navbar/Navbar.vue";
+import Addbutton from "@/components/addbutton/Addbutton.vue";
 
 const route = useRoute();
+const router = useRouter();
 const title = ref();
+const status = ref() ;
 
 async function fetchJourneys() {
   try {
     const id = '676c39fd5991fae62fcb1a63'
     const subJourneyId = route.query.journey_id || 0;
     title.value = route.query.title;
+    status.value = route.query.status;
     if(title.value === undefined){
       title.value = '';
     }
-
+    if(status.value === undefined){
+      status.value = '';
+    }
     //user.value.account_id
     const response = await fetch(`https://n8n.tonii.at/webhook/myjourney?id=${id}&journey_id=${subJourneyId}`, {
       method: 'GET',
@@ -52,7 +58,19 @@ function formatDate(date) {
   const d = new Date(date);
   return isNaN(d.getTime()) ? '' : d.toLocaleDateString(); // Format as 'MM/DD/YYYY'
 }
-
+function handleCustomEvent(newStatus: string) {
+  console.log("Event received:", newStatus);
+  status.value = newStatus
+  // Handle the event data
+  router.push({
+    path: "/main", // Navigate to the /main route
+    query: {
+      journey_id: route.query.journey_id || "", // Retain existing journey_id
+      title: route.query.title || "", // Retain existing title or use a default
+      status: newStatus, // Update the status in the query params
+    },
+  });
+}
 onMounted(() => {
   fetchJourneys();
 });
@@ -61,7 +79,7 @@ onMounted(() => {
 <template>
   <div class="main-container bg-gradient-to-br from-green-100 via-white to-blue-100">
     <!-- Banner -->
-    <banner :title="`MyJourney ${title}`"  :on-refresh="fetchJourneys"/>
+    <banner :title="`MyJourney ${title}`" :status="`${status}`"  :on-refresh="fetchJourneys"/>
 
     <!-- Journey List -->
     <section class="scrollable-section">
@@ -88,6 +106,8 @@ onMounted(() => {
         </li>
       </ul>
       <p v-else>No journeys available</p>
+      <addbutton class="floating-add-button"  @customEvent="handleCustomEvent"/>
+
     </section>
     <navbar/>
   </div>
@@ -101,6 +121,8 @@ onMounted(() => {
   display: flex;
   flex-direction: column;
   height: 100vh; /* Full height of the viewport */
+  user-select: none;
+
 }
 
 .scrollable-section {
@@ -121,6 +143,13 @@ onMounted(() => {
   font-size: 20px;
   margin-bottom: 10px;
 }
+.floating-add-button {
+  position: fixed; /* Fix the button in place */
+  bottom: 100px; /* Adjust height from the bottom of the screen */
+  right: 20px; /* Adjust distance from the right */
+  z-index: 10; /* Ensure it appears above other content */
+}
+
 .material-symbols-outlined {
   font-family: 'Material Symbols Outlined',serif;
   font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 48;

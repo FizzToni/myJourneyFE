@@ -38,6 +38,7 @@ onMounted(() => {
   fetchUser();
 });
 
+
 function goToHistory() {
   router.push('/history'); // Navigate to the /history route
 }
@@ -46,7 +47,7 @@ function goToHistory() {
 <template>
   <div class="main-container bg-gradient-to-br from-green-100 via-white to-blue-100">
     <!-- Banner -->
-    <Banner title="Profil" :on-refresh="fetchUser" />
+    <Banner title="Profil" status="" :on-refresh="fetchUser" />
     <div v-if="user">
     <!-- Profile Section -->
       <div class="profile-section">
@@ -91,8 +92,8 @@ function goToHistory() {
         </div>
       </div>
     </div>
-    <div class="button-container ">
-      <button class="justify-center"  @click="goToHistory">History</button>
+    <div class="button-container" @click="goToHistory">
+      <button class="justify-center" >History</button>
     </div>
     <!-- Navbar -->
     <Navbar />
@@ -105,6 +106,8 @@ function goToHistory() {
   display: flex;
   flex-direction: column;
   height: 100vh; /* Full viewport height */
+  user-select: none;
+
 }
 
 .profile-section {
@@ -114,6 +117,7 @@ function goToHistory() {
   border-radius: 10px;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   margin: 20px auto;
+
 }
 
 /* Profile Header */

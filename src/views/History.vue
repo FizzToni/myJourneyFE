@@ -29,8 +29,8 @@ async function fetchData() {
   }
 }
 
-function navigateToMyJourney(journey_id, title) {
-  router.push({ path: '/main', query: { journey_id, title } });
+function navigateToMyJourney(journey_id, title, status) {
+  router.push({ path: '/main', query: { journey_id, title, status } });
 }
 
 onMounted(() => {
@@ -41,7 +41,7 @@ onMounted(() => {
 <template>
   <div class="main-container bg-gradient-to-br from-green-100 via-white to-blue-100">
     <!-- Banner -->
-    <banner title="History" :on-refresh="fetchData" />
+    <banner title="History" status="" :on-refresh="fetchData" />
 
     <!-- Scrollable Sections -->
     <div class="scrollable-sections">
@@ -52,7 +52,7 @@ onMounted(() => {
           <li
             v-for="item in active"
             :key="item.id"
-            @click="navigateToMyJourney(item.journey_id, item.title)"
+            @click="navigateToMyJourney(item.journey_id, item.title, 'active')"
             class="clickable-item"
           >
             {{ item.title }}
@@ -68,7 +68,7 @@ onMounted(() => {
           <li
             v-for="item in inactive"
             :key="item.id"
-            @click="navigateToMyJourney(item.journey_id, item.title)"
+            @click="navigateToMyJourney(item.journey_id, item.title, 'inactive')"
             class="clickable-item"
           >
             {{ item.title }}
@@ -88,6 +88,8 @@ onMounted(() => {
   display: flex;
   flex-direction: column;
   height: 100vh; /* Full height of the viewport */
+  user-select: none;
+
 }
 
 .scrollable-sections {
