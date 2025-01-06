@@ -15,11 +15,11 @@
         </div>
         <div class="row space-between" :style="{ gap: '8px' }">
           <div class="info">
-            <h3 class="number">15</h3>
+            <h3 class="number" :style="{ color: textPrimaryColor }">15</h3>
             <p class="description">View your complete vaccination history.</p>
           </div>
           <div class="info">
-            <p class="number notification">12 new</p>
+            <p class="number notification" :style="{ backgroundColor: notificationBackground, color: textNotificationColor }">12 new</p>
             <p class="description">
               Discover more insights and recommendations.
             </p>
@@ -41,7 +41,7 @@
         :style="{ ...containerStyle, padding: '16px', flex: '0 0 calc((100%) * 0.3)' }"
       >
         <div>
-          <h3 class="number" :style="numberStyle">{{ item.number }}</h3>
+          <h3 class="number" :style="{ ...numberStyle, color: textPrimaryColor }">{{ item.number }}</h3>
           <p class="description">{{ item.text }}</p>
         </div>
       </div>
@@ -60,8 +60,8 @@
         :style="{ ...containerStyle, padding: '16px', flex: '0 0 calc(50% - 8px)' }"
       >
         <div>
-          <h3 class="number">{{ journey.nodes.length }}</h3>
-          <p class="description" :style="numberStyle">{{ journey.title }}</p>
+          <h3 class="number" :style="{ color: textPrimaryColor }">{{ journey.nodes.length }}</h3>
+          <p class="description" :style="{ ...numberStyle, color: textSecondaryColor }">{{ journey.title }}</p>
           <p class="description">{{ journey.status }}</p>
         </div>
       </div>
@@ -74,9 +74,11 @@ let user_id = "";
 export default {
   data() {
     return {
-      primaryBackground: '#ffffff',
-      secondaryBackground: '#cccccc',
-      textSecondaryColor: '#757575',
+      secondaryBackground: 'linear-gradient(to bottom right, #0EBE7E, #07D9AD)',
+      notificationBackground: '#ff0000',
+      textPrimaryColor: '#ffffff',
+      textSecondaryColor: '#555555',
+      textNotificationColor: '#ffffff',
       boxShadow: '0px 1px 3px rgba(0, 0, 0, 0.4)',
       borderRadius: '8px',
       nodes: [
@@ -96,7 +98,7 @@ export default {
   computed: {
     containerStyle() {
       return {
-        backgroundColor: this.secondaryBackground,
+        background: this.secondaryBackground,
         boxShadow: this.boxShadow,
         borderRadius: this.borderRadius,
         margin: '0',
@@ -120,7 +122,7 @@ export default {
     },
   },
   mounted() {
-    user_id ="677ba8958eca95927318b059";
+    user_id = "677ba8958eca95927318b059";
     this.fetchJourneys();
   },
 };
@@ -206,18 +208,14 @@ export default {
 
 .material-icons {
   font-size: 24px;
-  color: black;
 }
 
 .notification {
   font-size: 0.75em;
   display: inline-block;
   padding: 2px;
-  background-color: red;
-  color: white;
   font-weight: bold;
   border-radius: 8px;
   white-space: nowrap;
 }
-
 </style>
