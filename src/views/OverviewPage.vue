@@ -30,13 +30,13 @@
   <div>
     <div
       class="list-view"
-      :style="{ display: 'flex', overflowX: 'auto', padding: '8px', gap: '8px' }"
+      :style="{ display: 'flex', overflowX: 'auto', padding: '8px', gap: '8px', flexWrap: 'nowrap' }"
     >
       <div
         v-for="(item, index) in nodes"
         :key="index"
         class="container"
-        :style="{ ...containerStyle, padding: '16px', flex: '0 0 25%' }"
+        :style="{ ...containerStyle, padding: '16px', flex: '0 0 calc((100%) * 0.3)' }"
       >
         <div>
           <h3 class="number" :style="numberStyle">{{ item.number }}</h3>
@@ -75,12 +75,13 @@ export default {
       primaryBackground: '#ffffff',
       secondaryBackground: '#cccccc',
       textSecondaryColor: '#757575',
-      boxShadow: '0px 1px 3px rgba(0, 0, 0, 0.2)',
+      boxShadow: '0px 1px 3px rgba(0, 0, 0, 0.4)',
       borderRadius: '8px',
       nodes: [
         { number: '16', text: 'Vaccination' },
         { number: '12', text: 'Precaution' },
         { number: '9', text: 'Medication' },
+        { number: '10', text: 'Node 4' },
       ],
       journeys: [],
       numberStyle: {
@@ -151,7 +152,7 @@ export default {
   flex-direction: column;
   justify-content: flex-start;
   box-sizing: border-box;
-  flex: 0 0 25%;
+  flex: 0 0 auto;
 }
 
 .safe-area {
