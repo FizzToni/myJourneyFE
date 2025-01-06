@@ -35,7 +35,7 @@
               <p class="description">View your complete vaccination history.</p>
             </div>
             <div class="info">
-              <h3 class="number">12</h3>
+              <h3 class="number">12 new</h3>
               <p class="description">
                 Discover more insights and recommendations.
               </p>
