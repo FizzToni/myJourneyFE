@@ -1,8 +1,8 @@
 <template>
   <div class="safe-area">
     <div class="container" :style="containerStyle">
-      <div class="container-content">
-        <div class="row space-between">
+      <div class="container-content" :style="{ gap: '8px' }">
+        <div class="row space-between" :style="{ gap: '8px' }">
           <div class="info">
             <h2 class="headline">Vaccination Tracker</h2>
             <p class="description">
@@ -11,7 +11,7 @@
           </div>
           <i class="material-icons">></i>
         </div>
-        <div class="row space-between">
+        <div class="row space-between" :style="{ gap: '8px' }">
           <div class="info">
             <h3 class="number">15</h3>
             <p class="description">View your complete vaccination history.</p>
@@ -30,7 +30,7 @@
   <div>
     <div
       class="list-view"
-      :style="{ display: 'flex', overflowX: 'auto', padding: '8px', margin: '8px 0 0 0', gap: '5px' }"
+      :style="{ display: 'flex', overflowX: 'auto', padding: '8px', gap: '8px' }"
     >
       <div
         v-for="(item, index) in nodes"
@@ -46,25 +46,25 @@
     </div>
   </div>
 
-    <div>
+  <div>
+    <div
+      class="list-view"
+      :style="{ display: 'flex', flexWrap: 'wrap', gap: '8px', padding: '8px' }"
+    >
       <div
-        class="list-view"
-        :style="{ display: 'flex', flexWrap: 'wrap', gap: '16px', padding: '16px' }"
+        v-for="(journey, index) in journeys"
+        :key="index"
+        class="journey-card"
+        :style="{ ...containerStyle, padding: '16px', flex: '0 0 calc(50% - 8px)' }"
       >
-        <div
-          v-for="(journey, index) in journeys"
-          :key="index"
-          class="journey-card"
-          :style="{ ...containerStyle, padding: '16px', flex: '0 0 calc(50% - 16px)' }"
-        >
-          <div>
-            <h3 class="number">{{ journey.nodes.length }}</h3>
-            <p class="description" :style="numberStyle">{{ journey.title }}</p>
-            <p class="description">{{ journey.status }}</p>
-          </div>
+        <div>
+          <h3 class="number">{{ journey.nodes.length }}</h3>
+          <p class="description" :style="numberStyle">{{ journey.title }}</p>
+          <p class="description">{{ journey.status }}</p>
         </div>
       </div>
     </div>
+  </div>
 </template>
 
 <script>
@@ -72,9 +72,9 @@ let user_id = "";
 export default {
   data() {
     return {
-      primaryBackground: '#f0f0f0', // Replace with your actual color
-      secondaryBackground: '#ffffff', // Replace with your actual color
-      textSecondaryColor: '#757575', // Replace with your actual color
+      primaryBackground: '#ffffff',
+      secondaryBackground: '#cccccc',
+      textSecondaryColor: '#757575',
       boxShadow: '0px 1px 3px rgba(0, 0, 0, 0.2)',
       borderRadius: '8px',
       nodes: [
@@ -82,7 +82,7 @@ export default {
         { number: '12', text: 'Precaution' },
         { number: '9', text: 'Medication' },
       ],
-      journeys: [], // Journeys will be fetched from the API
+      journeys: [],
       numberStyle: {
         fontFamily: 'Inter Tight, sans-serif',
         fontSize: '20px',
@@ -96,7 +96,7 @@ export default {
         backgroundColor: this.secondaryBackground,
         boxShadow: this.boxShadow,
         borderRadius: this.borderRadius,
-        margin: '0', // Margin is handled by gap in the parent
+        margin: '0',
       };
     },
   },
@@ -126,14 +126,14 @@ export default {
 <style scoped>
 .list-view {
   display: flex;
-  flex-wrap: wrap; /* Elemente umbrechen, wenn Platz fehlt */
-  gap: 16px; /* Abstand zwischen den Elementen */
-  padding: 16px; /* Innenabstand des Containers */
+  flex-wrap: wrap;
+  gap: 8px;
+  padding: 8px;
 }
 
 .journey-card {
-  box-sizing: border-box; /* Padding und Border in Größe einberechnen */
-  flex: 0 0 calc(50% - 16px); /* Jede Karte nimmt 50% des verfügbaren Platzes minus Abstand ein */
+  box-sizing: border-box;
+  flex: 0 0 calc(50% - 8px);
 }
 
 .number {
@@ -146,13 +146,12 @@ export default {
   margin: 4px 0 0 0;
 }
 
-
 .container {
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
-  box-sizing: border-box; /* Ensure padding is included in width/height */
-  flex: 0 0 25%; /* Each container takes 1/4 of the screen width */
+  box-sizing: border-box;
+  flex: 0 0 25%;
 }
 
 .safe-area {
@@ -165,13 +164,15 @@ export default {
 }
 
 .container-content {
-  padding: 0 0 8px 0;
+  padding: 0;
+  gap: 8px;
 }
 
 .row {
   display: flex;
   flex-direction: row;
   align-items: center;
+  gap: 8px;
 }
 
 .space-between {
@@ -179,7 +180,7 @@ export default {
 }
 
 .info {
-  padding: 12px;
+  padding: 8px;
 }
 
 .headline {
