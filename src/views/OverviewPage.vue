@@ -30,7 +30,6 @@
     </div>
   </div>
 
-
   <div>
     <div
       class="list-view"
@@ -50,27 +49,29 @@
     </div>
   </div>
 
-  <div>
-    <div
-      class="list-view"
-      :style="{ display: 'flex', overflowX: 'auto', padding: '8px', margin: '8px 0 0 0', gap: '5px' }"
-    >
+    <div>
       <div
-        v-for="(item, index) in journeys"
-        :key="index"
-        class="container"
-        :style="{ ...containerStyle, padding: '16px', flex: '0 0 25%' }"
+        class="list-view"
+        :style="{ display: 'flex', flexWrap: 'wrap', gap: '16px', padding: '16px' }"
       >
-        <div>
-          <h3 class="number" :style="numberStyle">{{ item.number }}</h3>
-          <p class="description">{{ item.text }}</p>
+        <div
+          v-for="(journey, index) in journeys"
+          :key="index"
+          class="journey-card"
+          :style="{ ...containerStyle, padding: '16px', flex: '0 0 calc(50% - 16px)' }"
+        >
+          <div>
+            <h3 class="number">{{ journey.nodes.length }}</h3>
+            <p class="description" :style="numberStyle">{{ journey.title }}</p>
+            <p class="description">{{ journey.status }}</p>
+          </div>
         </div>
       </div>
     </div>
-  </div>
 </template>
 
 <script>
+let user_id = "";
 export default {
   data() {
     return {
@@ -84,15 +85,13 @@ export default {
         { number: '12', text: 'Precaution' },
         { number: '9', text: 'Medication' },
       ],
-      journeys: [
-        { number: '3', text: 'Journey 1' },
-        { number: '4', text: 'Journey 2' },
-        { number: '3', text: 'Journey 3' },
-        { number: '6', text: 'Journey 4' },
-        { number: '2', text: 'Journey 5' },
-        { number: '1', text: 'Journey 6' }
-      ]
-    }
+      journeys: [], // Journeys will be fetched from the API
+      numberStyle: {
+        fontFamily: 'Inter Tight, sans-serif',
+        fontSize: '20px',
+        margin: '0',
+      },
+    };
   },
   computed: {
     containerStyle() {
@@ -100,32 +99,44 @@ export default {
         backgroundColor: this.secondaryBackground,
         boxShadow: this.boxShadow,
         borderRadius: this.borderRadius,
-        margin: '0' // Margin is handled by gap in the parent
-      }
-    }
+        margin: '0', // Margin is handled by gap in the parent
+      };
+    },
   },
-  numberStyle: {
-    fontFamily: 'Inter Tight, sans-serif',
-    fontSize: '20px',
-    margin: '0'
-  }
-}
+  methods: {
+    async fetchJourneys() {
+      try {
+        let adresse = "https://n8n.tonii.at/webhook/getJourneyForOverview?id=" + user_id;
+        const response = await fetch(adresse);
+        const data = await response.json();
+        if (data && data[0] && data[0].journeys) {
+          this.journeys = data[0].journeys;
+        } else {
+          console.error('Unexpected API response structure', data);
+        }
+      } catch (error) {
+        console.error('Error fetching journeys:', error);
+      }
+    },
+  },
+  mounted() {
+    user_id ="677ba8958eca95927318b059";
+    this.fetchJourneys();
+  },
+};
 </script>
 
 <style scoped>
 .list-view {
   display: flex;
-  flex-wrap: nowrap;
-  overflow-x: auto;
-  gap: 5px; /* Space between nodes */
+  flex-wrap: wrap; /* Elemente umbrechen, wenn Platz fehlt */
+  gap: 16px; /* Abstand zwischen den Elementen */
+  padding: 16px; /* Innenabstand des Containers */
 }
 
-.container {
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-start;
-  box-sizing: border-box; /* Ensure padding is included in width/height */
-  flex: 0 0 25%; /* Each container takes 1/4 of the screen width */
+.journey-card {
+  box-sizing: border-box; /* Padding und Border in Größe einberechnen */
+  flex: 0 0 calc(50% - 16px); /* Jede Karte nimmt 50% des verfügbaren Platzes minus Abstand ein */
 }
 
 .number {
@@ -136,6 +147,15 @@ export default {
 .description {
   font-size: 14px;
   margin: 4px 0 0 0;
+}
+
+
+.container {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  box-sizing: border-box; /* Ensure padding is included in width/height */
+  flex: 0 0 25%; /* Each container takes 1/4 of the screen width */
 }
 
 .safe-area {
@@ -167,19 +187,19 @@ export default {
 
 .headline {
   font-size: 24px;
-  font-family: "Inter Tight", sans-serif;
+  font-family: 'Inter Tight', sans-serif;
   margin: 0;
 }
 
 .description {
   font-size: 14px;
-  font-family: "Inter", sans-serif;
+  font-family: 'Inter', sans-serif;
   margin: 4px 0 0 0;
 }
 
 .number {
   font-size: 20px;
-  font-family: "Inter Tight", sans-serif;
+  font-family: 'Inter Tight', sans-serif;
   margin: 0;
 }
 
