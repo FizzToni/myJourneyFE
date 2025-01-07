@@ -4,6 +4,7 @@ import MainJourneyPage from '@/views/MainJourneyPage.vue'
 import TestPage from "@/views/TestPage.vue";
 import History from "@/views/History.vue";
 import ProfilPage from "@/views/ProfilPage.vue";
+import GlobalSearch from '@/views/GlobalSearch.vue'
 
 const routes = [
   { path: '/', redirect: '/login' }, // default to login page
@@ -12,6 +13,8 @@ const routes = [
   { path: '/test', name: 'Test', component: TestPage },
   { path: '/history', name: 'History', component: History },
   { path: '/profil', name: 'Profil', component: ProfilPage }
+  { path: '/search', name: 'Search', component: GlobalSearch },
+  { path: '/history', name: 'History', component: History }
 ]
 
 const router = createRouter({
