@@ -12,7 +12,7 @@ const routes = [
   { path: '/main', name: 'Main', component: MainJourneyPage },
   { path: '/test', name: 'Test', component: TestPage },
   { path: '/history', name: 'History', component: History },
-  { path: '/profil', name: 'Profil', component: ProfilPage }
+  { path: '/profil', name: 'Profil', component: ProfilPage },
   { path: '/search', name: 'Search', component: GlobalSearch },
   { path: '/history', name: 'History', component: History }
 ]
