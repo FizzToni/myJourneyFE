@@ -1,5 +1,5 @@
 <script setup>
-import { ref } from 'vue';
+import { ref, computed } from 'vue';
 import { Button } from '@/components/ui/button';
 import {
   Card,
@@ -9,36 +9,94 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card';
+
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 
 // Node types for dropdown
-const types = ref(['Option 1', 'Option 2', 'Option 3']);
+const types = ref(['Vaccination', 'Med. Institution', 'E-Health', 'Other']);
 const selectedType = ref(types.value[0]);
 
-// Fields to be included in POST body
-const fields = ref([
-  { label: 'Name', value: 'node name' },
-  { label: 'Date', value: '2024-12-10' },
-  { label: 'Notes', value: 'notes' },
-  { label: 'Notes Doctor', value: 'notes doctor' },
-]);
+// Default field sets based on the node type
+const fieldTemplates = {
+  'Vaccination': [
+    { label: 'Name', value: '' },
+    { label: 'Reason', value: '' },
+    { label: 'Stationary', value: false },
+    { label: 'Admission Date', value: '' },
+    { label: 'Release Date', value: '' },
+    { label: 'Location', value: '' },
+    { label: 'Department', value: '' },
+    { label: 'Diagnosis', value: '' },
+    { label: 'Treatment', value: '' },
+    { label: 'Notes Doctor', value: '' },
+    { label: 'Notes Self', value: '' },
+    { label: 'Vaccine Type', value: '' },
+    { label: 'Remaining Doses', value: 0 },
+    { label: 'Next Dose From', value: '' },
+    { label: 'Next Dose By', value: '' },
+  ],
+  'Med. Institution': [
+    { label: 'Name', value: '' },
+    { label: 'Reason', value: '' },
+    { label: 'Stationary', value: false },
+    { label: 'Admission Date', value: '' },
+    { label: 'Release Date', value: '' },
+    { label: 'Location', value: '' },
+    { label: 'Department', value: '' },
+    { label: 'Diagnosis', value: '' },
+    { label: 'Treatment', value: '' },
+    { label: 'Notes Doctor', value: '' },
+    { label: 'Notes Self', value: '' },
+  ],
+  'E-Health': [
+    { label: 'Name', value: '' },
+    { label: 'Reason', value: '' },
+    { label: 'Stationary', value: false },
+    { label: 'Admission Date', value: '' },
+    { label: 'Release Date', value: '' },
+    { label: 'Location', value: '' },
+    { label: 'Department', value: '' },
+    { label: 'Diagnosis', value: '' },
+    { label: 'Treatment', value: '' },
+    { label: 'Notes Doctor', value: '' },
+    { label: 'Notes Self', value: '' },
+  ],
+  'Other': [
+    { label: 'Name', value: '' },
+    { label: 'Admission Date', value: '' },
+    { label: 'Release Date', value: '' },
+    { label: 'Notes Doctor', value: '' },
+    { label: 'Notes Self', value: '' },
+  ],
+};
 
-const generateNodeData = () => {
-  return fields.value.reduce((acc, field) => {
-    acc[field.label] = field.value;
+// Fields computed based on selected type
+const fields = computed(() => fieldTemplates[selectedType.value]);
+
+// Helper function to lowercase keys and format the node
+const formatNodeData = (fields) => {
+  return fields.reduce((acc, field) => {
+    acc[field.label.toLowerCase().replace(/ /g, '_')] = field.value;
     return acc;
   }, {});
 };
 
+const generateNodeData = () => {
+  const nodeData = formatNodeData(fields.value);
+  const idKey = '_id';
+  const idValue = null;
+  return { [idKey]: idValue, ...nodeData };
+};
+
 const callAddNode = async () => {
   const url = "https://n8n.tonii.at/webhook-test/addNode";
-  const id = '6766d85a6d8ba24d19d486a2';
+  const user_id = '677ba8958eca95927318b059';
   const journey_id = 1;
   const nodeData = generateNodeData();
 
   const requestBody = {
-    id,
+    user_id,
     journey_id,
     node: nodeData,
   };
@@ -56,7 +114,7 @@ const callAddNode = async () => {
 
     if (response.ok) {
       const data = await response.json();
-      console.log('Node added:', data);
+      console.log('Json response (should be old and updated user):', data[0]);
     } else {
       console.error('Failed to add node:', response.statusText);
     }
@@ -90,8 +148,10 @@ const callAddNode = async () => {
         <Input
           v-model="field.value"
           :id="'field' + index"
-          type="text"
+          :type="typeof field.value === 'boolean' ? 'checkbox' : 'text'"
           class="w-full mt-2 p-2 border rounded-md"
+          :checked="field.value === true"
+          @change="field.value = $event.target.type === 'checkbox' ? $event.target.checked : $event.target.value"
         />
       </div>
     </CardContent>
