@@ -19,6 +19,7 @@ import {
   TabsList,
   TabsTrigger,
 } from '@/components/ui/tabs';
+import Background from '@/components/Background.vue'
 
 const router = useRouter();
 const accountStore = useAccountStore();
@@ -51,14 +52,14 @@ const handleCreateAccount = async () => {
     await accountStore.createAccount(newEmail.value, newPassword.value);
     await router.push('/account/create'); // Redirect to /account/create on success
   } catch (error) {
-    alert('Failed to create account. Please try again.');
+    alert(`${error}`);
   }
 };
 </script>
 
 
 <template>
-  <div class="flex items-center justify-center h-screen bg-gradient-to-br from-green-100 via-white to-blue-100">
+  <Background>
     <Tabs default-value="login" class="w-[350px]">
       <TabsList class="flex justify-center w-full h-24 space-x-4 bg-transparent">
         <TabsTrigger value="login" class="bg-white border-b-2 size-1/2">
@@ -101,12 +102,12 @@ const handleCreateAccount = async () => {
           </CardHeader>
           <CardContent class="space-y-2">
             <div class="space-y-1">
-              <Label for="new-email">Email</Label>
-              <Input id="new-email" type="email" v-model="newEmail" />
+              <Label for="create-email">Email</Label>
+              <Input id="create-email" type="email" v-model="newEmail" />
             </div>
             <div class="space-y-1">
-              <Label for="new-password">Password</Label>
-              <Input id="new-password" type="password" v-model="newPassword" />
+              <Label for="create-password">Password</Label>
+              <Input id="create-password" type="password" v-model="newPassword" />
             </div>
           </CardContent>
           <CardFooter>
@@ -115,5 +116,5 @@ const handleCreateAccount = async () => {
         </Card>
       </TabsContent>
     </Tabs>
-  </div>
+  </Background>
 </template>
