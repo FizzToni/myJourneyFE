@@ -4,7 +4,8 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Label } from '@/components/ui/label'
 import { Input } from '@/components/ui/input'
 import Background from '@/components/Background.vue'
-import { ref } from 'vue'
+import {ref, watch} from 'vue'
+import { useAccountStore } from '@/stores/account';
 import {
   Select,
   SelectContent,
@@ -24,29 +25,84 @@ const vaccinesReceived = ref<string[]>([])
 const bloodDetails = ref<string[]>([])
 const otherTrackables = ref<string[]>([])
 
+const accountStore = useAccountStore();
 
 const handleNext = () => {
-  currentStep.value++
-}
+  currentStep.value++;
+};
 const handleBack = () => {
   currentStep.value--
 }
 
-const handleSave = () => {
+const handleSave = async () => {
   const userData = {
-    personalDetails: {
-      firstName: firstName.value,
-      lastName: lastName.value,
-      birthYear: birthYear.value,
-      gender: gender.value,
-    },
+    name: firstName.value,
+    surname: lastName.value,
+    birthYear: birthYear.value,
+    gender: gender.value,
     vaccines: vaccinesReceived.value,
     bloodWork: bloodDetails.value,
     otherTrackables: otherTrackables.value,
   }
+  try {
+    await accountStore.setAccountDetails(userData);
 
-  console.log(JSON.stringify(userData, null, 2))
+  } catch (error) {
+    //alert('Failed to set account details. Please try again.')
+  }
+
+
+  //console.log(JSON.stringify(userData, null, 2))
 }
+
+// const handleLogin = async () => {
+//   try {
+//     await accountStore.login(email.value, password.value); // Call the login API
+//     await router.push('/main'); // Redirect to /main on success
+//   } catch (error) {
+//     alert('Failed to login. Please try again.');
+//   }
+// };
+
+const handleChange = (array: string, value: string) => {
+  switch (array) {
+    case 'vaccines': {
+      const index = vaccinesReceived.value.indexOf(value);
+      if (index === -1) {
+        vaccinesReceived.value.push(value);
+      } else {
+        vaccinesReceived.value.splice(index, 1);
+      }
+      console.log(`Updated vaccines: ${vaccinesReceived.value}`);
+      break
+    }
+    case 'bloodDetails': {
+      const index = bloodDetails.value.indexOf(value);
+      if (index === -1) {
+        bloodDetails.value.push(value);
+      } else {
+        bloodDetails.value.splice(index, 1);
+      }
+      console.log(`Updated bloodDetails: ${bloodDetails.value}`);
+      break
+    }
+    case 'otherTrackables': {
+      const index = otherTrackables.value.indexOf(value);
+      if (index === -1) {
+        otherTrackables.value.push(value);
+      } else {
+        otherTrackables.value.splice(index, 1);
+      }
+      console.log(`Updated otherTrackables: ${otherTrackables.value}`);
+      break
+    }
+  }
+};
+
+watch(vaccinesReceived, (newValue) => {
+  console.log('Vaccines received:', newValue);
+});
+
 
 const vaccinesList = [
   { id: 'dtap', label: 'DTaP (Diphtheria, Tetanus, Pertussis)' },
@@ -104,9 +160,9 @@ const otherTrackablesList = [
         </div>
         <div class="space-y-1">
           <Label for="gender">Gender</Label>
-          <Select>
+          <Select v-model="gender">
             <SelectTrigger>
-              <SelectValue v-model="gender"/>
+              <SelectValue/>
             </SelectTrigger>
             <SelectContent>
               <SelectGroup>
@@ -130,10 +186,10 @@ const otherTrackablesList = [
             class="flex items-center space-x-2"
           >
             <Checkbox
-              type="checkbox"
               :id="vaccine.id"
-              v-model="vaccinesReceived"
               :value="vaccine.id"
+              :checked="vaccinesReceived.includes(vaccine.id)"
+              @update:checked="handleChange('vaccines' ,vaccine.id)"
             />
             <Label :for="vaccine.id" class="label">{{ vaccine.label }}</Label>
           </div>
@@ -151,10 +207,10 @@ const otherTrackablesList = [
             class="flex items-center space-x-2"
           >
             <Checkbox
-              type="checkbox"
               :id="blood.id"
-              v-model="bloodDetails"
               :value="blood.id"
+              :checked="bloodDetails.includes(blood.id)"
+              @update:checked="handleChange('bloodDetails' ,blood.id)"
             />
             <Label :for="blood.id" class="label">{{ blood.label }}</Label>
           </div>
@@ -172,10 +228,10 @@ const otherTrackablesList = [
             class="flex items-center space-x-2"
           >
             <Checkbox
-              type="checkbox"
               :id="other.id"
-              v-model="otherTrackables"
               :value="other.id"
+              :checked="otherTrackables.includes(other.id)"
+              @update:checked="handleChange('otherTrackables' ,other.id)"
             />
             <Label :for="other.id" class="label">{{ other.label }}</Label>
           </div>

@@ -52,7 +52,7 @@ const handleCreateAccount = async () => {
     await accountStore.createAccount(newEmail.value, newPassword.value);
     await router.push('/account/create'); // Redirect to /account/create on success
   } catch (error) {
-    alert('Failed to create account. Please try again.');
+    alert(`${error}`);
   }
 };
 </script>
