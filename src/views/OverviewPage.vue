@@ -56,6 +56,7 @@
         v-for="(journey, index) in journeys"
         :key="index"
         class="container journey-card"
+        @click="handleJourneyClick(journey.journey_id)"
       >
         <div>
           <h3 class="number">{{ journey.nodes.length }}</h3>
@@ -120,6 +121,10 @@ export default {
       console.log('User ID:' + user_id);
       console.log('Medication popup triggered.');
     },
+    handleJourneyClick(journeyId){
+      console.log('User ID:' + user_id);
+      console.log('Journey ID:', journeyId);
+    }
   },
   mounted() {
     user_id = "677ba8958eca95927318b059";
