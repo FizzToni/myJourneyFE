@@ -40,6 +40,7 @@
         v-for="(item, index) in nodes"
         :key="index"
         class="container padded flex-basis-30"
+        @click="item.onClick"
       >
         <div>
           <h3 class="number">{{ item.number }}</h3>
@@ -85,9 +86,21 @@ export default {
         if (data && data[0] && data[0].journeys) {
           this.journeys = data[0].journeys;
           this.numVaccination = data[0].numVaccine;
-          this.nodes.push({ number: this.numVaccination, text: 'Vaccination' });
-          this.nodes.push({ number: this.numVaccination, text: 'Precaution' });
-          this.nodes.push({ number: this.numVaccination, text: 'Medication' });
+          this.nodes.push({
+            number: this.numVaccination,
+            text: 'Vaccination',
+            onClick: this.handleVaccineClick
+          });
+          this.nodes.push({
+            number: this.numVaccination,
+            text: 'Precaution',
+            onClick: this.handlePrecautionClick
+          });
+          this.nodes.push({
+            number: this.numVaccination,
+            text: 'Medication',
+            onClick: this.handleMedicationClick
+          });
         } else {
           console.error('Unexpected API response structure', data);
         }
@@ -97,7 +110,15 @@ export default {
     },
     handleVaccineClick() {
       console.log('User ID:' + user_id);
-      console.log('and now the pop up for all vaccines with the user_id as a reference');
+      console.log('Vaccination popup triggered.');
+    },
+    handlePrecautionClick() {
+      console.log('User ID:' + user_id);
+      console.log('Precaution popup triggered.');
+    },
+    handleMedicationClick() {
+      console.log('User ID:' + user_id);
+      console.log('Medication popup triggered.');
     },
   },
   mounted() {
