@@ -4,7 +4,7 @@
       <div class="container-content">
         <div class="row">
           <div class="info">
-            <div style="display: flex; justify-content: space-between;">
+            <div class="flex-between">
               <h2 class="headline">Vaccination Tracker</h2>
               <i class="material-icons">></i>
             </div>
@@ -15,14 +15,13 @@
         </div>
         <div class="row">
           <div class="info">
-            <h3 class="number" v-if="numVaccination" >
+            <h3 class="number" v-if="numVaccination">
               {{ numVaccination }}
             </h3>
-
             <p class="description">View your complete vaccination history.</p>
           </div>
           <div class="info">
-            <p class="notification" :style="{ backgroundColor: 'red' }">12 new</p>
+            <p class="notification bg-red">12 new</p>
             <p class="description">
               Discover more insights and recommendations.
             </p>
@@ -33,15 +32,11 @@
   </div>
 
   <div>
-    <div
-      class="list-view"
-      :style="{ flexWrap: 'nowrap' }"
-    >
+    <div class="list-view nowrap">
       <div
         v-for="(item, index) in nodes"
         :key="index"
-        class="container"
-        :style="{ padding: '16px', flex: '0 0 calc((100%) * 0.3)' }"
+        class="container padded flex-basis-30"
       >
         <div>
           <h3 class="number">{{ item.number }}</h3>
@@ -52,10 +47,7 @@
   </div>
 
   <div>
-    <div
-      class="list-view"
-      :style="{ flexWrap: 'wrap' }"
-    >
+    <div class="list-view">
       <div
         v-for="(journey, index) in journeys"
         :key="index"
@@ -76,7 +68,7 @@ let user_id = "";
 export default {
   data() {
     return {
-      nodes: [], // TODO: Precaution, Medication, Node 4
+      nodes: [],
       journeys: [],
       numVaccination: 0,
     };
@@ -90,10 +82,7 @@ export default {
         if (data && data[0] && data[0].journeys) {
           this.journeys = data[0].journeys;
           this.numVaccination = data[0].numVaccine;
-          this.nodes.push({ number: this.numVaccination, text: 'Vaccination' })
-          this.nodes.push({ number: this.numVaccination, text: 'Vaccination' })
-          this.nodes.push({ number: this.numVaccination, text: 'Vaccination' })
-          this.nodes.push({ number: this.numVaccination, text: 'Vaccination' })
+          this.nodes.push({ number: this.numVaccination, text: 'Vaccination' });
         } else {
           console.error('Unexpected API response structure', data);
         }
@@ -111,10 +100,13 @@ export default {
 
 <style scoped>
 .list-view {
-  flex-wrap: wrap;
   display: flex;
   padding: 8px;
   gap: 8px;
+}
+
+.list-view.nowrap {
+  flex-wrap: nowrap;
 }
 
 .container {
@@ -125,6 +117,14 @@ export default {
   justify-content: flex-start;
   box-sizing: border-box;
   flex: 0 0 auto;
+}
+
+.container.padded {
+  padding: 16px;
+}
+
+.container.flex-basis-30 {
+  flex: 0 0 calc((100%) * 0.3);
 }
 
 .journey-card {
@@ -160,6 +160,11 @@ export default {
   padding: 8px;
 }
 
+.flex-between {
+  display: flex;
+  justify-content: space-between;
+}
+
 .headline {
   font-size: 24px;
   margin: 0;
@@ -186,4 +191,7 @@ export default {
   white-space: nowrap;
 }
 
+.notification.bg-red {
+  background-color: red;
+}
 </style>
