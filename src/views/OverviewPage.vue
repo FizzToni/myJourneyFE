@@ -6,7 +6,9 @@
           <div class="info">
             <div class="flex-between">
               <h2 class="headline">Vaccination Tracker</h2>
-              <i class="material-icons">></i>
+              <i class="material-icons"
+                 @click="handleVaccineClick()"
+              >></i>
             </div>
             <p class="description">
               Keep track of your vaccinations easily and stay informed.
@@ -97,6 +99,11 @@ export default {
     user_id = "677ba8958eca95927318b059";
     this.fetchJourneys();
   },
+};
+
+const handleVaccineClick = () => {
+  console.log('User ID:' + user_id);
+  console.log('and now the pop up for all vaccines with the user_id as a reference')
 };
 </script>
 
