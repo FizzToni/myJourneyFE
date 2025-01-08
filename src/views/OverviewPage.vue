@@ -106,7 +106,7 @@ export default {
   flex-wrap: wrap;
   gap: 8px;
   padding: 8px;
-  justify-content: center;
+  justify-content: space-between;
 }
 
 .container {
