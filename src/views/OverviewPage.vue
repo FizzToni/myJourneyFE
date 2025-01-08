@@ -1,8 +1,8 @@
 <template>
   <div class="safe-area">
-    <div class="container" :style="containerStyle">
-      <div class="container-content" :style="{ gap: '8px' }">
-        <div class="row space-between" :style="{ gap: '8px' }">
+    <div class="container">
+      <div class="container-content">
+        <div class="row">
           <div class="info">
             <div style="display: flex; justify-content: space-between;">
               <h2 class="headline">Vaccination Tracker</h2>
@@ -13,13 +13,16 @@
             </p>
           </div>
         </div>
-        <div class="row space-between" :style="{ gap: '8px' }">
+        <div class="row">
           <div class="info">
-            <h3 class="number" :style="{ color: textPrimaryColor }">15</h3>
+            <h3 class="number" v-if="numVaccination" >
+              {{ numVaccination }}
+            </h3>
+
             <p class="description">View your complete vaccination history.</p>
           </div>
           <div class="info">
-            <p class="number notification" :style="{ backgroundColor: notificationBackground, color: textNotificationColor }">12 new</p>
+            <p class="notification" :style="{ backgroundColor: 'red' }">12 new</p>
             <p class="description">
               Discover more insights and recommendations.
             </p>
@@ -32,16 +35,16 @@
   <div>
     <div
       class="list-view"
-      :style="{ display: 'flex', overflowX: 'auto', padding: '8px', gap: '8px', flexWrap: 'nowrap' }"
+      :style="{ flexWrap: 'nowrap' }"
     >
       <div
         v-for="(item, index) in nodes"
         :key="index"
         class="container"
-        :style="{ ...containerStyle, padding: '16px', flex: '0 0 calc((100%) * 0.3)' }"
+        :style="{ padding: '16px', flex: '0 0 calc((100%) * 0.3)' }"
       >
         <div>
-          <h3 class="number" :style="{ ...numberStyle, color: textPrimaryColor }">{{ item.number }}</h3>
+          <h3 class="number">{{ item.number }}</h3>
           <p class="description">{{ item.text }}</p>
         </div>
       </div>
@@ -51,17 +54,16 @@
   <div>
     <div
       class="list-view"
-      :style="{ display: 'flex', flexWrap: 'wrap', gap: '8px', padding: '8px' }"
+      :style="{ flexWrap: 'wrap' }"
     >
       <div
         v-for="(journey, index) in journeys"
         :key="index"
-        class="journey-card"
-        :style="{ ...containerStyle, padding: '16px', flex: '0 0 calc(50% - 8px)' }"
+        class="journey-card container"
       >
         <div>
-          <h3 class="number" :style="{ color: textPrimaryColor }">{{ journey.nodes.length }}</h3>
-          <p class="description" :style="{ ...numberStyle, color: textSecondaryColor }">{{ journey.title }}</p>
+          <h3 class="number">{{ journey.nodes.length }}</h3>
+          <p class="description">{{ journey.title }}</p>
           <p class="description">{{ journey.status }}</p>
         </div>
       </div>
@@ -74,36 +76,10 @@ let user_id = "";
 export default {
   data() {
     return {
-      secondaryBackground: 'linear-gradient(to bottom right, #0EBE7E, #07D9AD)',
-      notificationBackground: '#ff0000',
-      textPrimaryColor: '#ffffff',
-      textSecondaryColor: '#555555',
-      textNotificationColor: '#ffffff',
-      boxShadow: '0px 1px 3px rgba(0, 0, 0, 0.4)',
-      borderRadius: '8px',
-      nodes: [
-        { number: '16', text: 'Vaccination' },
-        { number: '12', text: 'Precaution' },
-        { number: '9', text: 'Medication' },
-        { number: '10', text: 'Node 4' },
-      ],
+      nodes: [], // TODO: Precaution, Medication, Node 4
       journeys: [],
-      numberStyle: {
-        fontFamily: 'Inter Tight, sans-serif',
-        fontSize: '20px',
-        margin: '0',
-      },
+      numVaccination: 0,
     };
-  },
-  computed: {
-    containerStyle() {
-      return {
-        background: this.secondaryBackground,
-        boxShadow: this.boxShadow,
-        borderRadius: this.borderRadius,
-        margin: '0',
-      };
-    },
   },
   methods: {
     async fetchJourneys() {
@@ -113,6 +89,11 @@ export default {
         const data = await response.json();
         if (data && data[0] && data[0].journeys) {
           this.journeys = data[0].journeys;
+          this.numVaccination = data[0].numVaccine;
+          this.nodes.push({ number: this.numVaccination, text: 'Vaccination' })
+          this.nodes.push({ number: this.numVaccination, text: 'Vaccination' })
+          this.nodes.push({ number: this.numVaccination, text: 'Vaccination' })
+          this.nodes.push({ number: this.numVaccination, text: 'Vaccination' })
         } else {
           console.error('Unexpected API response structure', data);
         }
@@ -122,7 +103,7 @@ export default {
     },
   },
   mounted() {
-    user_id = "677ba8958eca95927318b059";
+    user_id = "677bf13348c5315f7a19a204";
     this.fetchJourneys();
   },
 };
@@ -130,28 +111,15 @@ export default {
 
 <style scoped>
 .list-view {
-  display: flex;
   flex-wrap: wrap;
-  gap: 8px;
+  display: flex;
   padding: 8px;
-}
-
-.journey-card {
-  box-sizing: border-box;
-  flex: 0 0 calc(50% - 8px);
-}
-
-.number {
-  font-size: 20px;
-  margin: 0;
-}
-
-.description {
-  font-size: 14px;
-  margin: 4px 0 0 0;
+  gap: 8px;
 }
 
 .container {
+  background: linear-gradient(to bottom right, #0EBE7E, #07D9AD);
+  margin: 0;
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
@@ -159,13 +127,20 @@ export default {
   flex: 0 0 auto;
 }
 
-.safe-area {
-  padding: 8px;
+.journey-card {
+  box-sizing: border-box;
+  padding: 16px;
+  flex: 0 0 calc(50% - 8px);
 }
 
-.container {
-  display: flex;
-  flex-direction: column;
+.number {
+  color: white;
+  font-size: 20px;
+  margin: 0;
+}
+
+.safe-area {
+  padding: 8px;
 }
 
 .container-content {
@@ -174,14 +149,11 @@ export default {
 }
 
 .row {
+  justify-content: space-between;
   display: flex;
   flex-direction: row;
   align-items: center;
   gap: 8px;
-}
-
-.space-between {
-  justify-content: space-between;
 }
 
 .info {
@@ -190,20 +162,14 @@ export default {
 
 .headline {
   font-size: 24px;
-  font-family: 'Inter Tight', sans-serif;
   margin: 0;
+  color: black;
 }
 
 .description {
   font-size: 14px;
-  font-family: 'Inter', sans-serif;
   margin: 4px 0 0 0;
-}
-
-.number {
-  font-size: 20px;
-  font-family: 'Inter Tight', sans-serif;
-  margin: 0;
+  color: black;
 }
 
 .material-icons {
@@ -211,6 +177,7 @@ export default {
 }
 
 .notification {
+  color: white;
   font-size: 0.75em;
   display: inline-block;
   padding: 2px;
@@ -218,4 +185,5 @@ export default {
   border-radius: 8px;
   white-space: nowrap;
 }
+
 </style>
