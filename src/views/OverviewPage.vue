@@ -51,7 +51,7 @@
       <div
         v-for="(journey, index) in journeys"
         :key="index"
-        class="journey-card container"
+        class="container journey-card"
       >
         <div>
           <h3 class="number">{{ journey.nodes.length }}</h3>
@@ -94,7 +94,7 @@ export default {
     },
   },
   mounted() {
-    user_id = "677bf13348c5315f7a19a204";
+    user_id = "677ba8958eca95927318b059";
     this.fetchJourneys();
   },
 };
@@ -102,9 +102,11 @@ export default {
 
 <style scoped>
 .list-view {
-  justify-content: space-between;
   display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
   padding: 8px;
+  justify-content: center;
 }
 
 .container {
@@ -133,7 +135,7 @@ export default {
 }
 
 .number {
-  color: white;
+  color: black;
   font-size: 20px;
   margin: 0;
 }
