@@ -7,8 +7,9 @@
             <div class="flex-between">
               <h2 class="headline">Vaccination Tracker</h2>
               <i class="material-icons"
-                 @click="handleVaccineClick()"
-              >></i>
+                 @click="handleVaccineClick()">
+                >
+              </i>
             </div>
             <p class="description">
               Keep track of your vaccinations easily and stay informed.
@@ -94,6 +95,10 @@ export default {
         console.error('Error fetching journeys:', error);
       }
     },
+    handleVaccineClick() {
+      console.log('User ID:' + user_id);
+      console.log('and now the pop up for all vaccines with the user_id as a reference');
+    },
   },
   mounted() {
     user_id = "677ba8958eca95927318b059";
@@ -101,10 +106,6 @@ export default {
   },
 };
 
-const handleVaccineClick = () => {
-  console.log('User ID:' + user_id);
-  console.log('and now the pop up for all vaccines with the user_id as a reference')
-};
 </script>
 
 <style scoped>
