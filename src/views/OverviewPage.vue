@@ -32,7 +32,7 @@
   </div>
 
   <div>
-    <div class="list-view nowrap">
+    <div class="list-view">
       <div
         v-for="(item, index) in nodes"
         :key="index"
@@ -83,6 +83,8 @@ export default {
           this.journeys = data[0].journeys;
           this.numVaccination = data[0].numVaccine;
           this.nodes.push({ number: this.numVaccination, text: 'Vaccination' });
+          this.nodes.push({ number: this.numVaccination, text: 'Precaution' });
+          this.nodes.push({ number: this.numVaccination, text: 'Medication' });
         } else {
           console.error('Unexpected API response structure', data);
         }
@@ -105,10 +107,6 @@ export default {
   gap: 8px;
 }
 
-.list-view.nowrap {
-  flex-wrap: nowrap;
-}
-
 .container {
   background: linear-gradient(to bottom right, #0EBE7E, #07D9AD);
   margin: 0;
@@ -117,6 +115,7 @@ export default {
   justify-content: flex-start;
   box-sizing: border-box;
   flex: 0 0 auto;
+  border-radius: 8px;
 }
 
 .container.padded {
