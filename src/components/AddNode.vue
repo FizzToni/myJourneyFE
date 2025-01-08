@@ -1,6 +1,6 @@
 <script setup>
 import { ref, computed } from 'vue';
-import { Button } from '@/components/ui/button';
+import { Button } from '@/components/ui/button/index.ts';
 import {
   Card,
   CardContent,
@@ -8,10 +8,10 @@ import {
   CardFooter,
   CardHeader,
   CardTitle,
-} from '@/components/ui/card';
+} from '@/components/ui/card/index.ts';
 
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
+import { Input } from '@/components/ui/input/index.ts';
+import { Label } from '@/components/ui/label/index.ts';
 
 // Node types for dropdown
 const types = ref(['Vaccination', 'Med. Institution', 'E-Health', 'Other']);
