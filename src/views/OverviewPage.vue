@@ -102,9 +102,9 @@ export default {
 
 <style scoped>
 .list-view {
+  justify-content: space-between;
   display: flex;
   padding: 8px;
-  gap: 8px;
 }
 
 .container {
@@ -123,7 +123,7 @@ export default {
 }
 
 .container.flex-basis-30 {
-  flex: 0 0 calc((100%) * 0.3);
+  flex: 0 0 calc((100%) * 0.32);
 }
 
 .journey-card {
