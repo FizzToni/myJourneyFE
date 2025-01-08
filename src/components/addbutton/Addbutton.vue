@@ -35,7 +35,7 @@ function handleChangeStatus(option: string, status: string) {
   console.log("Clicked option:", option);
   triggerChangeStatusEvent(status === "active" ? "inactive" : "active");//data[0].status
 
-  const id = "676c39fd5991fae62fcb1a63"; // Example ID
+  const id = "677bf13348c5315f7a19a204"; // Example ID
   const journey_id = route.query.journey_id; // Extract journey_id from the route
 
   fetch("https://n8n.tonii.at/webhook/status", {

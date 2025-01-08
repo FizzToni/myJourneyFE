@@ -19,7 +19,7 @@ const isVisible = ref(false);
 
 async function fetchJourneys() {
   try {
-    const id = '676c39fd5991fae62fcb1a63'
+    const id = '677bf13348c5315f7a19a204'
     const subJourneyId = route.query.journey_id || 0;
     title.value = route.query.title;
     status.value = route.query.status;
@@ -129,7 +129,8 @@ function closeModal() {
 
 <style scoped>
 .name{
-  margin-top: -30px;
+  margin-top: -15px;
+  font-size: 24px;
 }
 .main-container {
   display: flex;
@@ -168,7 +169,7 @@ function closeModal() {
   font-family: 'Material Symbols Outlined',serif;
   font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 48;
   color: #0EBE7E;
-  font-size: 25pt;
+  font-size: 35pt;
 }
 .info-container {
   display: flex; /* Align items horizontally */
@@ -179,8 +180,8 @@ function closeModal() {
   display: flex;
   justify-content: center;
   align-items: center;
-  width: 60px; /* Adjust size of the circle */
-  height: 60px; /* Adjust size of the circle */
+  width: 80px; /* Adjust size of the circle */
+  height: 80px; /* Adjust size of the circle */
   background-color: white; /* Background color for the circle */
   border-radius: 50%; /* Makes it a perfect circle */
   box-shadow: 0px 5px 10px rgba(0, 0, 0, 0.3); /* Shadow effect */
@@ -192,12 +193,12 @@ function closeModal() {
   font-size: 40px; /* Adjust size of the dots */
   color: gray; /* Set the color of the dots */
   margin-top: 5px;
-  margin-left: 24px;
+  margin-left: 30px;
 }
 .date-display {
-  font-size: 14px;
+  font-size: 15px;
   color: gray;
-  margin-top: -30px;
-  margin-left: 70px;
+  margin-top: -32px;
+  margin-left: 90px;
 }
 </style>
