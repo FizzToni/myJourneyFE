@@ -2,6 +2,7 @@ import { createRouter, createWebHistory } from 'vue-router'
 import AuthPage from '@/views/AuthPage.vue'
 import MainJourneyPage from '@/views/MainJourneyPage.vue'
 import History from "@/views/History.vue";
+import OverviewPage from '@/views/OverviewPage.vue'
 import ProfilPage from "@/views/ProfilPage.vue";
 import GlobalSearch from '@/views/GlobalSearch.vue'
 
@@ -12,7 +13,7 @@ const routes = [
   { path: '/history', name: 'History', component: History },
   { path: '/profil', name: 'Profil', component: ProfilPage },
   { path: '/search', name: 'Search', component: GlobalSearch },
-  { path: '/history', name: 'History', component: History }
+  { path: '/overview', name: 'Overview', component: OverviewPage }
 ]
 
 const router = createRouter({
