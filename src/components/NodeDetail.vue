@@ -27,9 +27,7 @@ const fieldTemplates = {
   'Vaccination': [
     { label: 'Name', value: '' },
     { label: 'Reason', value: '' },
-    { label: 'Stationary', value: false },
-    { label: 'Admission Date', value: '' },
-    { label: 'Release Date', value: '' },
+    { label: 'Date', value: '' },
     { label: 'Location', value: '' },
     { label: 'Department', value: '' },
     { label: 'Diagnosis', value: '' },
@@ -45,8 +43,7 @@ const fieldTemplates = {
     { label: 'Name', value: '' },
     { label: 'Reason', value: '' },
     { label: 'Stationary', value: false },
-    { label: 'Admission Date', value: '' },
-    { label: 'Release Date', value: '' },
+    { label: 'Date', value: '' },
     { label: 'Location', value: '' },
     { label: 'Department', value: '' },
     { label: 'Diagnosis', value: '' },
@@ -57,9 +54,7 @@ const fieldTemplates = {
   'E-Health': [
     { label: 'Name', value: '' },
     { label: 'Reason', value: '' },
-    { label: 'Stationary', value: false },
-    { label: 'Admission Date', value: '' },
-    { label: 'Release Date', value: '' },
+    { label: 'Date', value: '' },
     { label: 'Location', value: '' },
     { label: 'Department', value: '' },
     { label: 'Diagnosis', value: '' },
@@ -69,8 +64,7 @@ const fieldTemplates = {
   ],
   'Other': [
     { label: 'Name', value: '' },
-    { label: 'Admission Date', value: '' },
-    { label: 'Release Date', value: '' },
+    { label: 'Date', value: '' },
     { label: 'Notes Doctor', value: '' },
     { label: 'Notes Self', value: '' },
   ],
@@ -218,6 +212,7 @@ onMounted(fetchNodeDetails);
               v-model="selectedType"
               id="type"
               class="w-full mt-2 p-2 border rounded-md"
+              :disabled="isEditMode"
             >
               <option v-for="type in types" :key="type" :value="type">{{ type }}</option>
             </select>
