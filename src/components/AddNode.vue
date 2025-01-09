@@ -17,14 +17,20 @@ import { Label } from '@/components/ui/label/index.ts';
 const types = ref(['Vaccination', 'Med. Institution', 'E-Health', 'Other']);
 const selectedType = ref(types.value[0]);
 
+// Type mappings for backend node creation.
+const reverseTypeMappings = {
+  'Med. Institution': 'med_institution',
+  'E-Health': 'e_health',
+  'Vaccination': 'vaccination',
+  'Other': 'other',
+};
+
 // Default field sets based on the node type
 const fieldTemplates = {
   'Vaccination': [
     { label: 'Name', value: '' },
     { label: 'Reason', value: '' },
-    { label: 'Stationary', value: false },
-    { label: 'Admission Date', value: '' },
-    { label: 'Release Date', value: '' },
+    { label: 'Date', value: '' },
     { label: 'Location', value: '' },
     { label: 'Department', value: '' },
     { label: 'Diagnosis', value: '' },
@@ -40,8 +46,7 @@ const fieldTemplates = {
     { label: 'Name', value: '' },
     { label: 'Reason', value: '' },
     { label: 'Stationary', value: false },
-    { label: 'Admission Date', value: '' },
-    { label: 'Release Date', value: '' },
+    { label: 'Date', value: '' },
     { label: 'Location', value: '' },
     { label: 'Department', value: '' },
     { label: 'Diagnosis', value: '' },
@@ -52,9 +57,7 @@ const fieldTemplates = {
   'E-Health': [
     { label: 'Name', value: '' },
     { label: 'Reason', value: '' },
-    { label: 'Stationary', value: false },
-    { label: 'Admission Date', value: '' },
-    { label: 'Release Date', value: '' },
+    { label: 'Date', value: '' },
     { label: 'Location', value: '' },
     { label: 'Department', value: '' },
     { label: 'Diagnosis', value: '' },
@@ -64,8 +67,7 @@ const fieldTemplates = {
   ],
   'Other': [
     { label: 'Name', value: '' },
-    { label: 'Admission Date', value: '' },
-    { label: 'Release Date', value: '' },
+    { label: 'Date', value: '' },
     { label: 'Notes Doctor', value: '' },
     { label: 'Notes Self', value: '' },
   ],
@@ -86,7 +88,9 @@ const generateNodeData = () => {
   const nodeData = formatNodeData(fields.value);
   const idKey = '_id';
   const idValue = null;
-  return { [idKey]: idValue, ...nodeData };
+  const typeKey = 'type';
+  const typeValue = reverseTypeMappings[selectedType.value] || 'other';
+  return { [idKey]: idValue, [typeKey]: typeValue, ...nodeData };
 };
 
 const callAddNode = async () => {
