@@ -12,6 +12,7 @@ import {
 interface Vaccine {
   id: number;
   name: string;
+  details: string;
   date: string;
   location: string;
   dose: number;
@@ -56,6 +57,7 @@ onMounted(() => {
 
       <CardContent>
         <ul>
+          <li> {{ unref(vaccine)?.details }}</li>
           <li><strong>Date:</strong> {{ unref(vaccine)?.date }}</li>
           <li><strong>Location:</strong> {{ unref(vaccine)?.location }}</li>
           <li><strong>Dose:</strong> {{ unref(vaccine)?.dose }}</li>
