@@ -11,7 +11,7 @@
               <div class="flex-between">
                 <h2 class="headline">Vaccination Tracker</h2>
                 <i class="material-icons"
-                   @click="handleVaccineClick()">
+                   @click="handleUserVaccineClick()">
                   >
                 </i>
               </div>
@@ -135,9 +135,12 @@ export default {
         console.error('Error fetching journeys:', error)
       }
     },
-    handleVaccineClick() {
+    handleUserVaccineClick() {
       console.log('User ID:' + user_id)
       console.log('Vaccination popup triggered.')
+    },
+    handleVaccineClick() {
+      window.location.replace('/vaccines');
     },
     handlePrecautionClick() {
       console.log('User ID:' + user_id)

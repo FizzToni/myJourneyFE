@@ -27,6 +27,7 @@ const fetchVaccines = async () => {
 
 const handleVaccineClick = (id) => {
   console.log(id);
+  window.location.replace('/vaccineDetail');
 };
 
 onMounted(fetchVaccines);
