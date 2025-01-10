@@ -16,10 +16,12 @@ const router = useRouter();
 const title = ref();
 const status = ref();
 const isVisible = ref(false);
+// Current date
+const currentDate = new Date(); // Today's date
 
 async function fetchJourneys() {
   try {
-    const id = '677bf13348c5315f7a19a204'
+    const id = '678175573b069098d0d222a4'
     const subJourneyId = route.query.journey_id || 0;
     title.value = route.query.title;
     status.value = route.query.status;
@@ -88,6 +90,33 @@ function closeModal() {
   isVisible.value = false;
 }
 
+
+// Function to determine if the "Today" line should be displayed before a node
+function shouldRenderTodayLine(node, index, length) {
+  const nodeDate = new Date(getDateProperty(node)); // Convert node date to Date object
+
+  // Check if the node date exists and is greater or equal to today
+  if (isNaN(nodeDate.getTime())) return false; // Skip invalid dates
+
+  const previousNode = journeys.value[index - 1];
+  const previousNodeDate = previousNode ? new Date(getDateProperty(previousNode)) : null;
+
+
+  return (
+    nodeDate >= currentDate && // Current node date is today or in the future
+    (!previousNodeDate || previousNodeDate < currentDate)// Previous node date is before today
+  );
+}
+
+function lastNode(node, index, length) {
+  const nodeDate = new Date(getDateProperty(node)); // Convert node date to Date object
+
+  // Check if the node date exists and is greater or equal to today
+  if (isNaN(nodeDate.getTime())) return false; // Skip invalid dates
+  return (
+    nodeDate < currentDate && index == length -1// Previous node date is before today
+  );
+}
 </script>
 
 <template>
@@ -99,31 +128,44 @@ function closeModal() {
     <section class="scrollable-section">
       <ul v-if="journeys.length > 0">
         <li v-for="(node, index) in journeys" :key="node.id">
+          <div v-if="shouldRenderTodayLine(node, index, journeys.length)" class="today-line">
+            <span class="line-text">Today {{ formatDate(currentDate) }}</span>
+          </div>
+
+          <!-- Journey Node -->
           <div class="info-container">
             <p>
-              <span class="icon-circle">
-                <i class="material-symbols-outlined">
-                  <!-- Dynamically render icons -->
-                  <template v-if="node.type === 'medication'">pill</template>
-                  <template v-else-if="node.type === 'med_institution'">home_health</template>
-                  <template v-else>help</template>
-                </i>
-              </span>
+            <span class="icon-circle">
+              <i class="material-symbols-outlined">
+                <!-- Dynamically render icons -->
+                <template v-if="node.type === 'medication'">pill</template>
+                <template v-else-if="node.type === 'med_institution'">home_health</template>
+                <template v-else>help</template>
+              </i>
+            </span>
             </p>
             <p class="name">{{ node.name }}</p>
           </div>
-          <!-- Display date dynamically if available -->
+
+          <!-- Display Date -->
           <p v-if="getDateProperty(node)" class="date-display">
-              {{ formatDate(getDateProperty(node)) }}
-            </p>
+            {{ formatDate(getDateProperty(node)) }}
+          </p>
+
+          <!-- Dots Between Nodes -->
           <div v-if="index < journeys.length - 1" class="dots">⋮</div>
+          <!-- Render the "Today" line dynamically -->
+          <div v-if="lastNode(node, index, journeys.length)" class="last-today-line">
+            <span class="line-text">Today {{ formatDate(currentDate) }}</span>
+          </div>
         </li>
       </ul>
-      <p v-else>No journeys available</p>
+
+      <p v-else>No Nodes available</p>
       <addbutton class="floating-add-button"  @customEvent="handleCustomEvent" @createJourney="handleCreateJourneyEvent"/>
       <modal :on-close="closeModal" :is-visible="isVisible"/>
     </section>
-    <navbar/>
+    <navbar option="MyJourney"/>
   </div>
 </template>
 
@@ -201,4 +243,48 @@ function closeModal() {
   margin-top: -32px;
   margin-left: 90px;
 }
+.today-line {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative; /* Positioning for pseudo-elements */
+  width: 80%;
+  z-index: 10; /* Ensure the line stays below the text */
+  margin-left: 10%;
+  margin-top: -40px;
+  margin-bottom: 20px;
+}
+.last-today-line{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative; /* Positioning for pseudo-elements */
+  width: 80%;
+  z-index: 10; /* Ensure the line stays below the text */
+  margin-left: 10%;
+  margin-top: 30px;
+}
+
+.today-line .line-text,
+.last-today-line .line-text {
+  font-weight: bold;
+  font-size: 14px;
+  color: #555;
+  background: rgba(255, 255, 255, 0); /* Fully transparent background */
+  padding: 0 10px; /* Space around the text */
+  z-index: 10; /* Ensure the text stays on top of the line */
+}
+
+.today-line::before,
+.today-line::after,
+.last-today-line::before,
+.last-today-line::after {
+  content: "";
+  flex: 1; /* Allows the lines to grow and fill space */
+  height: 2px; /* Thickness of the line */
+  background-color: black;
+  z-index: 10; /* Place the line below the text */
+}
+
+
 </style>

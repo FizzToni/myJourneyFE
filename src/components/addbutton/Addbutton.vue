@@ -10,7 +10,7 @@ const route = useRoute();
 const router = useRouter();
 
 const status =route.query.status; // Default status
-const id = "676c39fd5991fae62fcb1a63";
+const id = "678175573b069098d0d222a4";
 const journey_id = route.query.journey_id;
 
 const emit = defineEmits<{
@@ -35,7 +35,7 @@ function handleChangeStatus(option: string, status: string) {
   console.log("Clicked option:", option);
   triggerChangeStatusEvent(status === "active" ? "inactive" : "active");//data[0].status
 
-  const id = "677bf13348c5315f7a19a204"; // Example ID
+  const id = "678175573b069098d0d222a4"; // Example ID
   const journey_id = route.query.journey_id; // Extract journey_id from the route
 
   fetch("https://n8n.tonii.at/webhook/status", {

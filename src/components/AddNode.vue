@@ -90,9 +90,9 @@ const generateNodeData = () => {
 };
 
 const callAddNode = async () => {
-  const url = "https://n8n.tonii.at/webhook-test/addNode";
-  const user_id = '677ba8958eca95927318b059';
-  const journey_id = 1;
+  const url = "https://n8n.tonii.at/webhook/addNode";
+  const user_id = '678175573b069098d0d222a4';
+  const journey_id = null;
   const nodeData = generateNodeData();
 
   const requestBody = {

@@ -52,7 +52,7 @@ const searchQuery = ref('');
 
 const fetchSearchResults = async (query: string) => {
   try {
-    const response = await fetch(`https://n8n.tonii.at/webhook/globalSearch?id=677bf13348c5315f7a19a204&name=${query}`);
+    const response = await fetch(`https://n8n.tonii.at/webhook/globalSearch?id=678175573b069098d0d222a4&name=${query}`);
 
     if (response.ok) {
       const data = await response.json();
@@ -117,7 +117,7 @@ function bannerStyleF(status: string) {
           <p class="sub-title">{{ title }}</p>
         </div>
         <img
-          src="@/assets/avatar.jpg"
+          src="@/assets/Sarah_müller.jpg"
           alt="User Profile"
           class="profile-image"
         />
@@ -229,21 +229,26 @@ function bannerStyleF(status: string) {
 }
 
 .search-bar-container {
-  position: absolute; /* Allow positioning over the banner */
-  top: 100%; /* Adjust based on how much overlap you want */
+  position: absolute;
+  top: 100%;
   left: 50%;
-  transform: translate(-50%, -45%); /* Center horizontally */
-  z-index: 10; /* Ensure it's above the banner */
-  width: 70%; /* Adjust width as needed */
-  border: 2px solid #ccc; /* Add border */
-  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.2); /* Add shadow */
-  border-radius: 25px; /* Half of the height to create rounded edges */
-  background-color: white; /* Optional: Background color */
-  display: flex; /* Center content inside */
+  z-index: 10;
+  min-height: 50px; /* Prevent shrinking */
+  width: 250px;
+  box-sizing: border-box; /* Include padding/border in size */
+  border: 2px solid #ccc;
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.2);
+  border-radius: 25px;
+  background-color: white;
+  display: flex;
   align-items: center;
-  overflow: hidden; /* Prevent content from spilling out */
+  overflow: hidden;
+  margin-left: -125px;
+  margin-top: -30px;
 }
 
-
+.search-bar-container {
+  border: 1px solid green;
+}
 </style>
 
