@@ -10,6 +10,7 @@ import AddNode from "@/components/AddNode.vue";
 import AddJourney from "@/components/AddJourney.vue";
 import Vaccines from '@/components/Vaccines.vue'
 import VaccineDetail from '@/components/VaccineDetail.vue'
+import VaccinesUser from '@/components/VaccinesUser.vue'
 
 const routes = [
   { path: '/', redirect: '/login' }, // default to login page
@@ -24,6 +25,7 @@ const routes = [
   { path: '/overview', name: 'Overview', component: OverviewPage },
   { path: '/vaccines', name: 'Vaccines', component: Vaccines },
   { path: '/vaccineDetail', name: 'VaccineDetail', component: VaccineDetail },
+  { path: '/vaccinesUser', name: 'VaccinesUser', component: VaccinesUser },
 ]
 
 const router = createRouter({

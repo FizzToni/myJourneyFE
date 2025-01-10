@@ -75,7 +75,7 @@
     <navbar/>
 </template>
 
-<script>
+<script setup lang="ts">
 import Banner from "@/components/banner/banner.vue";
 import Navbar from "@/components/navbar/Navbar.vue";
 import Addbutton from "@/components/addbutton/Addbutton.vue";
