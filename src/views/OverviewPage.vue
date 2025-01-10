@@ -18,8 +18,8 @@
         </div>
         <div class="row">
           <div class="info">
-            <h3 class="number" v-if="numVaccination">
-              {{ numVaccination }}
+            <h3 class="number" v-if="vaccines">
+              {{ vaccines.length }}
             </h3>
             <p class="description">View your complete vaccination history.</p>
           </div>
@@ -69,68 +69,72 @@
 </template>
 
 <script>
-let user_id = "";
+let user_id = ''
 export default {
   data() {
     return {
       nodes: [],
       journeys: [],
-      numVaccination: 0,
-    };
+      vaccines: []
+    }
   },
   methods: {
     async fetchJourneys() {
       try {
-        let adresse = "https://n8n.tonii.at/webhook/getJourneyForOverview?id=" + user_id;
-        const response = await fetch(adresse);
-        const data = await response.json();
+        let adresse = 'https://n8n.tonii.at/webhook/getDataForOverview?id=' + user_id
+        const response = await fetch(adresse)
+        const data = await response.json()
         if (data && data[0] && data[0].journeys) {
-          this.journeys = data[0].journeys;
-          this.numVaccination = data[0].numVaccine;
+          this.journeys = data[0].journeys
+          this.vaccines = data[0].vaccines
+        }
+
+        adresse = 'https://n8n.tonii.at/webhook/getAllVaccine'
+        const response2 = await fetch(adresse)
+        const vaccines = await response2.json()
+        if (vaccines) {
           this.nodes.push({
-            number: this.numVaccination,
+            number: vaccines.length,
             text: 'Vaccination',
             onClick: this.handleVaccineClick
-          });
+          })
           this.nodes.push({
-            number: this.numVaccination,
+            number: 0,
             text: 'Precaution',
             onClick: this.handlePrecautionClick
-          });
+          })
           this.nodes.push({
-            number: this.numVaccination,
+            number: 0,
             text: 'Medication',
             onClick: this.handleMedicationClick
-          });
-        } else {
-          console.error('Unexpected API response structure', data);
+          })
         }
       } catch (error) {
-        console.error('Error fetching journeys:', error);
+        console.error('Error fetching journeys:', error)
       }
     },
     handleVaccineClick() {
-      console.log('User ID:' + user_id);
-      console.log('Vaccination popup triggered.');
+      console.log('User ID:' + user_id)
+      console.log('Vaccination popup triggered.')
     },
     handlePrecautionClick() {
-      console.log('User ID:' + user_id);
-      console.log('Precaution popup triggered.');
+      console.log('User ID:' + user_id)
+      console.log('Precaution popup triggered.')
     },
     handleMedicationClick() {
-      console.log('User ID:' + user_id);
-      console.log('Medication popup triggered.');
+      console.log('User ID:' + user_id)
+      console.log('Medication popup triggered.')
     },
-    handleJourneyClick(journeyId){
-      console.log('User ID:' + user_id);
-      console.log('Journey ID:', journeyId);
+    handleJourneyClick(journeyId) {
+      console.log('User ID:' + user_id)
+      console.log('Journey ID:', journeyId)
     }
   },
   mounted() {
-    user_id = "677ba8958eca95927318b059";
-    this.fetchJourneys();
-  },
-};
+    user_id = '677ba8958eca95927318b059'
+    this.fetchJourneys()
+  }
+}
 
 </script>
 
