@@ -136,8 +136,7 @@ export default {
       }
     },
     handleUserVaccineClick() {
-      console.log('User ID:' + user_id)
-      console.log('Vaccination popup triggered.')
+      window.location.replace('/vaccinesUser');
     },
     handleVaccineClick() {
       window.location.replace('/vaccines');
