@@ -41,7 +41,7 @@ const fetchVaccines = async () => {
 // Typisierung für den Parameter `id` hinzufügen
 const handleVaccineClick = (id: string) => {
   console.log(id);
-  window.location.replace(`/vaccineDetail?id=${id}`); // ID an die URL anhängen
+  window.location.replace(`/vaccineUserDetail?id=${id}`); // ID an die URL anhängen
 };
 
 onMounted(fetchVaccines);
