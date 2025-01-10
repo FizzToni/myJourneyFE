@@ -122,12 +122,12 @@ export default {
           })
           this.nodes.push({
             number: 0,
-            text: 'Precaution',
+            text: 'Node 2',
             onClick: this.handlePrecautionClick
           })
           this.nodes.push({
             number: 0,
-            text: 'Medication',
+            text: 'Node 3',
             onClick: this.handleMedicationClick
           })
         }

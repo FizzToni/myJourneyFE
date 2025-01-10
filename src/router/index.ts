@@ -8,6 +8,8 @@ import GlobalSearch from '@/views/GlobalSearch.vue'
 import NodeDetail from '@/components/NodeDetail.vue'
 import AddNode from "@/components/AddNode.vue";
 import AddJourney from "@/components/AddJourney.vue";
+import Vaccines from '@/components/Vaccines.vue'
+import VaccineDetail from '@/components/VaccineDetail.vue'
 
 const routes = [
   { path: '/', redirect: '/login' }, // default to login page
@@ -19,7 +21,9 @@ const routes = [
   { path: '/history', name: 'History', component: History },
   { path: '/profil', name: 'Profil', component: ProfilPage },
   { path: '/search', name: 'Search', component: GlobalSearch },
-  { path: '/overview', name: 'Overview', component: OverviewPage }
+  { path: '/overview', name: 'Overview', component: OverviewPage },
+  { path: '/vaccines', name: 'Vaccines', component: Vaccines },
+  { path: '/vaccineDetail', name: 'VaccineDetail', component: VaccineDetail },
 ]
 
 const router = createRouter({
