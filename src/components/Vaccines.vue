@@ -8,7 +8,13 @@ import {
   CardTitle,
 } from '@/components/ui/card/index.ts';
 
-const vaccines = ref([]);
+interface Vaccine {
+  _id: string;
+  name: string;
+  description?: string;
+}
+
+const vaccines = ref<Vaccine[]>([]);
 const loading = ref(true);
 
 const fetchVaccines = async () => {
@@ -25,9 +31,10 @@ const fetchVaccines = async () => {
   }
 };
 
-const handleVaccineClick = (id) => {
+// Typisierung für den Parameter `id` hinzufügen
+const handleVaccineClick = (id: string) => {
   console.log(id);
-  window.location.replace('/vaccineDetail');
+  window.location.replace(`/vaccineDetail?id=${id}`);
 };
 
 onMounted(fetchVaccines);
@@ -53,7 +60,7 @@ onMounted(fetchVaccines);
               @click="handleVaccineClick(vaccine._id)"
             >
               <strong>{{ vaccine.name }}</strong>
-              <p>{{ vaccine.description }}</p>
+              <p>{{ vaccine.description || 'No description available' }}</p>
             </li>
           </ul>
         </div>
@@ -61,3 +68,6 @@ onMounted(fetchVaccines);
     </Card>
   </div>
 </template>
+
+<style scoped>
+</style>
