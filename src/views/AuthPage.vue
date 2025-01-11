@@ -41,7 +41,7 @@ const newPassword = ref('');
 const handleLogin = async () => {
   try {
     await accountStore.login(email.value, password.value); // Call the login API
-    await router.push('/main'); // Redirect to /main on success
+    await router.push('/main');
   } catch (error) {
     alert('Failed to login. Please try again.');
   }
@@ -50,7 +50,7 @@ const handleLogin = async () => {
 const handleCreateAccount = async () => {
   try {
     await accountStore.createAccount(newEmail.value, newPassword.value);
-    await router.push('/account/create'); // Redirect to /account/create on success
+    await router.push('/account/create');
   } catch (error) {
     alert(`${error}`);
   }

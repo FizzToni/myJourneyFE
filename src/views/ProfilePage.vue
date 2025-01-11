@@ -5,8 +5,8 @@ import { ref, onMounted } from 'vue';
 
 const { user2 } = storeToRefs(useAccountStore());
 import {useRoute, useRouter} from 'vue-router';
-import Banner from "@/components/banner/banner.vue";
-import Navbar from "@/components/navbar/Navbar.vue";
+import Banner from "@/components/Banner/Banner.vue";
+import Navbar from "@/components/NavBar/Navbar.vue";
 
 const user = ref<any>(null); // Store user data
 

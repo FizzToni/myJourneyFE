@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
-import Banner from "@/components/banner/banner.vue";
-import Navbar from "@/components/navbar/Navbar.vue";
+import Banner from "@/components/Banner/Banner.vue";
+import Navbar from "@/components/NavBar/Navbar.vue";
 
 const router = useRouter();
 const active = ref([]);

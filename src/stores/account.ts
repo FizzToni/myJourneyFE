@@ -5,7 +5,7 @@ export const useAccountStore = defineStore('account', {
     user: {
       email: '',
       password: '',
-      account_id: null
+      account_id: null,
     },
   }),
   actions: {
@@ -29,14 +29,15 @@ export const useAccountStore = defineStore('account', {
         this.user = {
           email: data.email,
           password: data.password,
-          account_id: data.id
+          account_id: data._id
         };
+
+        console.log(`[Login]: ${this.user.account_id}`)
       } catch (error) {
         console.error('[Account] Error during login:', error);
         throw error; // Forward the error to the component
       }
     },
-
 
     async createAccount(email: string, password: string) {
       try {
@@ -58,7 +59,7 @@ export const useAccountStore = defineStore('account', {
         this.user = {
           email: data.email,
           password: data.password,
-          account_id: data.id
+          account_id: data._id
         };
 
         console.log(`[Account]  Created user:`, this.user.account_id)
@@ -68,8 +69,7 @@ export const useAccountStore = defineStore('account', {
       }
     },
 
-
-    async setAccountDetails(details) {
+    async setAccountDetails(details: any) {
       const accountDetails = {
         "id": this.user.account_id,
         "name": details.name,
@@ -85,7 +85,7 @@ export const useAccountStore = defineStore('account', {
       console.log(`[Account] Details: ${JSON.stringify(accountDetails, null, 2)}`)
 
       try {
-        const response = await fetch('https://n8n.tonii.at/webhook-test/selectPrefences', {
+        const response = await fetch('https://n8n.tonii.at/webhook/selectPrefences', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -106,6 +106,29 @@ export const useAccountStore = defineStore('account', {
         throw error;
       }
 
+    },
+
+    async fetchJourney(subJourneyId: any) {
+
+      try {
+        const id = this.user.account_id;
+        const response = await fetch(`https://n8n.tonii.at/webhook/myjourney?id=${id}&journey_id=${subJourneyId}`, {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        });
+
+        if (!response.ok) {
+          throw new Error(`Error fetching journey: ${response.status}`);
+        }
+        const data = await response.json();
+        return data;
+
+      } catch (error) {
+        console.error('Error fetching journeys:', error);
+        alert('Failed to fetch journeys. Check console for details.');
+      }
     }
   },
 

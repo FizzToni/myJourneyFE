@@ -15,6 +15,7 @@ import {
   SelectValue
 } from '@/components/ui/select'
 import { Checkbox } from '@/components/ui/checkbox'
+import router from '@/router'
 
 const firstName = ref('')
 const lastName = ref('')
@@ -46,23 +47,13 @@ const handleSave = async () => {
   }
   try {
     await accountStore.setAccountDetails(userData);
+    await router.push('/main');
 
   } catch (error) {
-    //alert('Failed to set account details. Please try again.')
+    alert('Failed to set account details. Please try again.')
   }
-
-
-  //console.log(JSON.stringify(userData, null, 2))
 }
 
-// const handleLogin = async () => {
-//   try {
-//     await accountStore.login(email.value, password.value); // Call the login API
-//     await router.push('/main'); // Redirect to /main on success
-//   } catch (error) {
-//     alert('Failed to login. Please try again.');
-//   }
-// };
 
 const handleChange = (array: string, value: string) => {
   switch (array) {

@@ -142,21 +142,21 @@ const isMainPage = computed(() => route.fullPath.endsWith("/main"));
 
 /* FAB (Floating Action Button) */
 .fab {
-  width: 60px;
-  height: 60px;
+  width: 56px;
+  height: 56px;
   border-radius: 50%;
   background: #0ebe7e; /* Green color */
-  color: white;
+  color: black;
   font-size: 24px;
+  font-weight: 600;
   border: none;
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
   transition: background 0.3s;
-  margin-right: 15px;
-  margin-bottom: 30px;
+  margin-bottom: 15px;
 }
 
 .fab:hover {
@@ -166,7 +166,7 @@ const isMainPage = computed(() => route.fullPath.endsWith("/main"));
 /* Popup Options */
 .popup-options {
   position: absolute; /* Place options above the button */
-  bottom: 70px; /* Distance from the button */
+  bottom: 55px; /* Distance from the button */
   right: 0; /* Align to the right edge */
   display: flex;
   flex-direction: column;
