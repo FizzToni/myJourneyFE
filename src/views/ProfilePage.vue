@@ -1,37 +1,21 @@
 <script setup lang="ts">
-import { storeToRefs } from 'pinia';
 import { useAccountStore } from '@/stores/account';
 import { ref, onMounted } from 'vue';
 
-const { user2 } = storeToRefs(useAccountStore());
 import {useRoute, useRouter} from 'vue-router';
 import Banner from "@/components/Banner/Banner.vue";
-import Navbar from "@/components/NavBar/Navbar.vue";
+import { Card, CardDescription, CardTitle } from '@/components/ui/card'
+import Wrapper from '@/components/AppWrapper.vue'
 
 const user = ref<any>(null); // Store user data
 
-const route = useRoute();
 const router = useRouter();
 
-async function fetchUser() {
-  try {
-    const id = '676c39fd5991fae62fcb1a63';
+const accountStore = useAccountStore();
 
-    const response = await fetch(`https://n8n.tonii.at/webhook/user?id=${id}`, {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    });
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
-    }
-    user.value = await response.json();
-    user.value = user.value[0];
-  } catch (error) {
-    console.error('Error fetching user:', error);
-    alert('Failed to fetch user data. Check console for details.');
-  }
+async function fetchUser() {
+  const response = await accountStore.fetchUserDetails();
+  user.value = response[0] || [];
 }
 
 onMounted(() => {
@@ -45,59 +29,57 @@ function goToHistory() {
 </script>
 
 <template>
-  <div class="main-container bg-gradient-to-br from-green-100 via-white to-blue-100">
-    <!-- Banner -->
-    <Banner title="Profil" status="" :on-refresh="fetchUser" />
-    <div v-if="user">
-    <!-- Profile Section -->
-      <div class="profile-section">
-        <div class="profile-header">
-          <!-- User Image -->
-          <img
-            src="@/assets/avatar.jpg"
-            alt="User Profile"
-            class="profile-image"
-          />
-          <!-- Name and Surname -->
-          <div class="profile-name">
-            <p v-if="user.name" class="name"><strong>{{ user.name }}</strong></p>
-            <p v-if="user.surname" class="surname"><strong>{{ user.surname }}</strong></p>
+  <Wrapper title="Profil" status="" :on-refresh="fetchUser">
+    <Card>
+      <div v-if="user">
+      <!-- Profile Section -->
+        <div class="profile-section">
+          <div class="profile-header">
+            <!-- User Image -->
+            <img
+              src="@/assets/avatar.jpg"
+              alt="User Profile"
+              class="profile-image"
+            />
+            <!-- Name and Surname -->
+            <div class="profile-name">
+              <p v-if="user.name" class="name"><strong>{{ user.name }}</strong></p>
+              <p v-if="user.surname" class="surname"><strong>{{ user.surname }}</strong></p>
+            </div>
           </div>
-        </div>
 
-        <!-- Email and Password -->
-        <div class="user-details">
-          <p v-if="user.email"><strong>Email:</strong> {{ user.email }}</p>
-          <p v-if="user.password"><strong>Password:</strong> ******</p>
-        </div>
+          <!-- Email and Password -->
+          <div class="user-details">
+            <p v-if="user.email"><strong>Email:</strong> {{ user.email }}</p>
+            <p v-if="user.password"><strong>Password:</strong> ******</p>
+          </div>
 
-        <!-- Options -->
-        <div class="preferences">
-          <div class="preference">
-            <label for="vaccination_opt">Vaccination</label>
-            <input id="vaccination_opt" type="checkbox" v-model="user.vaccination_opt" />
-          </div>
-          <div class="preference">
-            <label for="bloodwork_opt">Bloodwork</label>
-            <input id="bloodwork_opt" type="checkbox" v-model="user.bloodwork_opt" />
-          </div>
-          <div class="preference">
-            <label for="precaution_opt">Precaution</label>
-            <input id="precaution_opt" type="checkbox" v-model="user.precaution_opt" />
-          </div>
-          <div class="preference">
-            <label for="plasma_donation_opt">Plasma Donation</label>
-            <input id="plasma_donation_opt" type="checkbox" v-model="user.plasma_donation_opt" />
+          <!-- Options -->
+          <div class="preferences">
+            <div class="preference">
+              <label for="vaccination_opt">Vaccination</label>
+              <input id="vaccination_opt" type="checkbox" v-model="user.vaccination_opt" />
+            </div>
+            <div class="preference">
+              <label for="bloodwork_opt">Bloodwork</label>
+              <input id="bloodwork_opt" type="checkbox" v-model="user.bloodwork_opt" />
+            </div>
+            <div class="preference">
+              <label for="precaution_opt">Precaution</label>
+              <input id="precaution_opt" type="checkbox" v-model="user.precaution_opt" />
+            </div>
+            <div class="preference">
+              <label for="plasma_donation_opt">Plasma Donation</label>
+              <input id="plasma_donation_opt" type="checkbox" v-model="user.plasma_donation_opt" />
+            </div>
           </div>
         </div>
       </div>
-    </div>
+    </Card>
     <div class="button-container" @click="goToHistory">
       <button class="justify-center" >History</button>
     </div>
-    <!-- Navbar -->
-    <Navbar />
-  </div>
+  </Wrapper>
 </template>
 
 <style scoped>

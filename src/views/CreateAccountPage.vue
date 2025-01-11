@@ -3,7 +3,7 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card'
 import { Label } from '@/components/ui/label'
 import { Input } from '@/components/ui/input'
-import Background from '@/components/Background.vue'
+import Wrapper from '@/components/AppWrapper.vue'
 import {ref, watch} from 'vue'
 import { useAccountStore } from '@/stores/account';
 import {
@@ -90,10 +90,6 @@ const handleChange = (array: string, value: string) => {
   }
 };
 
-watch(vaccinesReceived, (newValue) => {
-  console.log('Vaccines received:', newValue);
-});
-
 
 const vaccinesList = [
   { id: 'dtap', label: 'DTaP (Diphtheria, Tetanus, Pertussis)' },
@@ -127,8 +123,8 @@ const otherTrackablesList = [
 </script>
 
 <template>
-  <Background>
-    <Card class="w-10/12">
+  <Wrapper :navbar=false :banner=false>
+    <Card class="w-11/12 m-auto">
       <CardHeader>
         <CardTitle>Let's get started</CardTitle>
       </CardHeader>
@@ -236,5 +232,5 @@ const otherTrackablesList = [
         <Button v-if="currentStep > 1" @click="handleBack" variant="ghost">Back</Button>
       </CardFooter>
     </Card>
-  </Background>
+  </Wrapper>
 </template>

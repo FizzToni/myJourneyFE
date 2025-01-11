@@ -6,7 +6,7 @@ import Banner from "@/components/Banner/Banner.vue";
 import Navbar from "@/components/NavBar/Navbar.vue";
 import Modal from "@/components/Modal/Modal.vue";
 import JourneyNode from '@/components/JourneyNode.vue'
-import Background from '@/components/Background.vue'
+import Wrapper from '@/components/AppWrapper.vue'
 import AddButton from '@/components/AddButton/AddButton.vue'
 
 const accountStore = useAccountStore();
@@ -24,17 +24,15 @@ async function fetchJourneys() {
 
   journeys.value = response || [];
 
-  //TODO: what does this do?
-  /*
-      title.value = route.query.title;
-    status.value = route.query.status;
-    if(title.value === undefined){
-      title.value = '';
-    }
-    if(status.value === undefined){
-      status.value = '';
-    }
-  */
+  title.value = route.query.title;
+  status.value = route.query.status;
+  if(title.value === undefined){
+    title.value = '';
+  }
+  if(status.value === undefined){
+    status.value = '';
+  }
+
 }
 
 // Helper to get the date property
@@ -79,30 +77,26 @@ function closeModal() {
 </script>
 
 <template>
-  <Background>
-    <div class="flex flex-col h-screen w-screen">
-      <Banner :title="title" :status="status" :on-refresh="fetchJourneys"/>
-      <section class="flex-grow overflow-y-scroll px-8 py-2">
-        <ul v-if="journeys.length > 0">
-          <li v-for="(node, index) in journeys" :key="node.id">
-            <JourneyNode
-              :node="node"
-              :is-last="index === journeys.length - 1"
-              :format-date="formatDate"
-              :get-date-property="getDateProperty"
-            />
-          </li>
-        </ul>
-        <p v-else class="min-h-[825px] text-center text-gray-500 font-semibold mt-8">No journeys available</p>
-      </section>
-      <Navbar/>
-    </div>
+  <Wrapper :title="title" :status="status" :on-refresh="fetchJourneys">
+    <section>
+      <ul v-if="journeys.length > 0">
+        <li v-for="(node, index) in journeys" :key="index">
+          <JourneyNode
+            :node="node"
+            :is-last="index === journeys.length - 1"
+            :format-date="formatDate"
+            :get-date-property="getDateProperty"
+          />
+        </li>
+      </ul>
+      <p v-else class="min-h-[825px] text-center text-gray-500 font-semibold mt-8">No journeys available</p>
+    </section>
     <AddButton
       @customEvent="handleCustomEvent"
       @createJourney="handleCreateJourneyEvent"
     />
     <modal :on-close="closeModal" :is-visible="isVisible" />
-  </Background>
+  </Wrapper>
 </template>
 
 

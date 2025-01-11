@@ -1,4 +1,4 @@
-<script setup>
+<script setup lang="ts">
 import { ref } from 'vue';
 import { Button } from '@/components/ui/button/index.ts';
 import {

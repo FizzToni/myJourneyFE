@@ -6,8 +6,16 @@ export const useAccountStore = defineStore('account', {
       email: '',
       password: '',
       account_id: null,
+      name: '',
+      surname: '',
+      birthYear: 2000,
+      gender: '',
+      vaccines: [],
+      bloodWork: [],
+      otherTrackables: []
     },
   }),
+  persist: true,
   actions: {
     async login(email: string, password: string) {
       try {
@@ -27,6 +35,7 @@ export const useAccountStore = defineStore('account', {
 
         // Save the user data to the store
         this.user = {
+          ...this.user,
           email: data.email,
           password: data.password,
           account_id: data._id
@@ -57,6 +66,7 @@ export const useAccountStore = defineStore('account', {
 
         // Save the user data to the store
         this.user = {
+          ...this.user,
           email: data.email,
           password: data.password,
           account_id: data._id
@@ -71,9 +81,10 @@ export const useAccountStore = defineStore('account', {
 
     async setAccountDetails(details: any) {
       const accountDetails = {
-        "id": this.user.account_id,
+        "_id": this.user.account_id,
         "name": details.name,
         "surname": details.surname,
+        "birthYear": details.birthYear,
         "email": this.user.email,
         "password": this.user.password,
         "gender": details.gender,
@@ -92,20 +103,27 @@ export const useAccountStore = defineStore('account', {
           },
           body: JSON.stringify(accountDetails)
         });
-
         if (!response.ok) {
           throw new Error('Set Account Details failed');
         }
 
-        const data = await response.json();
+        this.user = {
+          ...this.user,
+          name: response.name,
+          surname: response.surname,
+          birthYear: response.birthYear,
+          gender: response.gender,
+          vaccines: response.vaccines,
+          bloodWork: response.bloodWork,
+          otherTrackables: response.otherTrackables
+        }
 
-        console.log(`Data: ${data}`);
+        return response.json();
 
       } catch (error) {
         console.error('[Account] Failed to update account details:', error);
         throw error;
       }
-
     },
 
     async fetchJourney(subJourneyId: any) {
@@ -129,8 +147,30 @@ export const useAccountStore = defineStore('account', {
         console.error('Error fetching journeys:', error);
         alert('Failed to fetch journeys. Check console for details.');
       }
-    }
+    },
+
+    async fetchUserDetails() {
+      try {
+        const id = this.user.account_id;
+        const response = await fetch(`https://n8n.tonii.at/webhook/user?id=${id}`, {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        });
+
+        if (!response.ok) {
+          throw new Error(`Error fetching user details: ${response.status}`);
+        }
+        const data = await response.json();
+        console.log(data);
+        return data;
+
+      } catch (error) {
+        console.error('Error fetching user details:', error);
+        alert('Failed to fetch user details. Check console for details.');
+      }
+    },
+
   },
-
-
 });

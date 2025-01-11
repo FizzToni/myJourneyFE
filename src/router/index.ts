@@ -1,4 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router'
+import { useAccountStore } from '@/stores/account'
+
 import AuthPage from '@/views/AuthPage.vue'
 import MainJourneyPage from '@/views/MainJourneyPage.vue'
 import History from "@/views/History.vue";
@@ -20,13 +22,23 @@ const routes = [
   { path: '/history', name: 'History', component: History },
   { path: '/profile', name: 'Profile', component: ProfilePage },
   { path: '/search', name: 'Search', component: GlobalSearch },
-  { path: '/overview', name: 'Overview', component: OverviewPage }
+  { path: '/overview', name: 'Overview', component: OverviewPage },
   { path: '/account/create', name: 'CreateAccount', component: CreateAccountPage },
 ]
 
 const router = createRouter({
   history: createWebHistory(),
   routes
+})
+
+router.beforeEach((to, from, next) => {
+  const userStore = useAccountStore()
+
+  if (to.name !== 'Login' && !userStore.user.account_id) {
+    next({ name: 'Login' })
+  } else {
+    next()
+  }
 })
 
 export default router

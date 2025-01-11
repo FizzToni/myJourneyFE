@@ -19,7 +19,7 @@ import {
   TabsList,
   TabsTrigger,
 } from '@/components/ui/tabs';
-import Background from '@/components/Background.vue'
+import Wrapper from '@/components/AppWrapper.vue'
 
 const router = useRouter();
 const accountStore = useAccountStore();
@@ -59,8 +59,8 @@ const handleCreateAccount = async () => {
 
 
 <template>
-  <Background>
-    <Tabs default-value="login" class="w-[350px]">
+  <Wrapper :navbar=false :banner=false >
+    <Tabs default-value="login" class="w-11/12 m-auto">
       <TabsList class="flex justify-center w-full h-24 space-x-4 bg-transparent">
         <TabsTrigger value="login" class="bg-white border-b-2 size-1/2">
           Login
@@ -116,5 +116,5 @@ const handleCreateAccount = async () => {
         </Card>
       </TabsContent>
     </Tabs>
-  </Background>
+  </Wrapper>
 </template>
