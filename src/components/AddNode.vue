@@ -28,19 +28,11 @@ const reverseTypeMappings = {
 // Default field sets based on the node type
 const fieldTemplates = {
   'Vaccination': [
-    { label: 'Name', value: '' },
-    { label: 'Reason', value: '' },
-    { label: 'Date', value: '' },
-    { label: 'Location', value: '' },
-    { label: 'Department', value: '' },
-    { label: 'Diagnosis', value: '' },
-    { label: 'Treatment', value: '' },
-    { label: 'Notes Doctor', value: '' },
-    { label: 'Notes Self', value: '' },
-    { label: 'Vaccine Type', value: '' },
-    { label: 'Remaining Doses', value: 0 },
-    { label: 'Next Dose From', value: '' },
-    { label: 'Next Dose By', value: '' },
+    { label: 'Name', value: 'vaccineName' },
+    { label: 'Details', value: 'here are some extra details' },
+    { label: 'Date', value: '01.01.2020' },
+    { label: 'Location', value: 'Karlsplatz 1' },
+    { label: 'Dose', value: 1 },
   ],
   'Med. Institution': [
     { label: 'Name', value: '' },
@@ -84,6 +76,17 @@ const formatNodeData = (fields) => {
   }, {});
 };
 
+const generateVaccinationData = () => {
+  // Collect data for vaccination
+  const vaccinationData = {
+    name: fields.value[0].value,
+    details: fields.value[1].value,
+    date: fields.value[2].value,
+    location: fields.value[3].value,
+    dose: fields.value[4].value,
+  };
+
+  return vaccinationData;
 const generateNodeData = () => {
   const nodeData = formatNodeData(fields.value);
   const idKey = '_id';
@@ -93,6 +96,48 @@ const generateNodeData = () => {
   return { [idKey]: idValue, [typeKey]: typeValue, ...nodeData };
 };
 
+// Handle Add Vaccination
+const handleAddVaccination = async () => {
+  if (selectedType.value === 'Vaccination') {
+    const vaccinationData = generateVaccinationData();
+
+    const requestBody = {
+      user_id: '677ba8958eca95927318b059',
+      vaccine: vaccinationData,  // Include the vaccine data
+    };
+
+    const url = 'https://n8n.tonii.at/webhook/addVaccie';
+
+    try {
+      const response = await fetch(url, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(requestBody),
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+      } else {
+        console.error('Failed to add vaccination:', response.statusText);
+      }
+    } catch (error) {
+      console.error('Error adding vaccination:', error);
+    }
+  }
+};
+
+// Function to handle button click based on selected type
+const handleAddNodeClick = () => {
+  if (selectedType.value === 'Vaccination') {
+    handleAddVaccination(); // Handle Vaccination logic
+  } else {
+    callAddNode(); // Handle other node types
+  }
+};
+
+// The existing function for other node types
 const callAddNode = async () => {
   const url = "https://n8n.tonii.at/webhook-test/addNode";
   const user_id = '677ba8958eca95927318b059';
@@ -150,6 +195,7 @@ const callAddNode = async () => {
       <div v-for="(field, index) in fields" :key="index" class="mb-4">
         <Label :for="'field' + index">{{ field.label }}</Label>
         <Input
+          v-if="field.label !== 'Dose' && field.label !== 'Date'"
           v-model="field.value"
           :id="'field' + index"
           :type="typeof field.value === 'boolean' ? 'checkbox' : 'text'"
@@ -157,11 +203,31 @@ const callAddNode = async () => {
           :checked="field.value === true"
           @change="field.value = $event.target.type === 'checkbox' ? $event.target.checked : $event.target.value"
         />
+
+        <!-- Date Picker for 'Date' field -->
+        <Input
+          v-if="field.label === 'Date'"
+          v-model="field.value"
+          :id="'field' + index"
+          type="date"
+          class="w-full mt-2 p-2 border rounded-md"
+        />
+
+        <!-- Numeric Input for 'Dose' field -->
+        <Input
+          v-if="field.label === 'Dose'"
+          v-model="field.value"
+          :id="'field' + index"
+          type="number"
+          class="w-full mt-2 p-2 border rounded-md"
+          min="1"
+          step="1"
+        />
       </div>
     </CardContent>
 
     <CardFooter>
-      <Button @click="callAddNode" class="w-full">Add Node</Button>
+      <Button @click="handleAddNodeClick" class="w-full">Add Node</Button>
     </CardFooter>
   </Card>
 </template>
