@@ -83,7 +83,8 @@ const fields = computed(() => {
 const typeMappings = {
   'med_institution': 'Med. Institution',
   'e_health': 'E-Health',
-  'vaccination': 'Vaccination'
+  'vaccination': 'Vaccination',
+  'other': 'Other',
 };
 
 const fetchNodeDetails = async () => {
