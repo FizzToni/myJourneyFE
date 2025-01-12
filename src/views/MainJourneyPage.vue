@@ -2,14 +2,14 @@
 import { storeToRefs } from 'pinia';
 import { useAccountStore } from '@/stores/account';
 import { ref, onMounted } from 'vue';
-
-const { user } = storeToRefs(useAccountStore());
-const journeys = ref([]); // Store journey data
 import {useRoute, useRouter} from 'vue-router';
 import Banner from "@/components/banner/banner.vue";
 import Navbar from "@/components/navbar/Navbar.vue";
 import Addbutton from "@/components/addbutton/Addbutton.vue";
 import Modal from "@/components/Modal/Modal.vue";
+
+const { user } = storeToRefs(useAccountStore());
+const journeys = ref([]); // Store journey data
 
 const route = useRoute();
 const router = useRouter();
@@ -42,7 +42,7 @@ async function fetchJourneys() {
       throw new Error(`HTTP error! status: ${response.status}`);
     }
     const data = await response.json();
-    journeys.value = data || [];
+    journeys.value = data[0].nodes || [];
     console.log(journeys);
   } catch (error) {
     console.error('Error fetching journeys:', error);
@@ -248,9 +248,9 @@ function lastNode(node, index, length) {
   align-items: center;
   justify-content: center;
   position: relative; /* Positioning for pseudo-elements */
-  width: 80%;
+  width: 70%;
   z-index: 10; /* Ensure the line stays below the text */
-  margin-left: 10%;
+  margin-left: 15%;
   margin-top: -40px;
   margin-bottom: 20px;
 }
@@ -259,9 +259,9 @@ function lastNode(node, index, length) {
   align-items: center;
   justify-content: center;
   position: relative; /* Positioning for pseudo-elements */
-  width: 80%;
+  width: 70%;
   z-index: 10; /* Ensure the line stays below the text */
-  margin-left: 10%;
+  margin-left: 15%;
   margin-top: 30px;
 }
 

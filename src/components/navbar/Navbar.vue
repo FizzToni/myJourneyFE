@@ -27,7 +27,7 @@ const props = defineProps<{
 // Navigation items
 const navItems = [
   { label: 'MyJourney', icon: 'timeline', route: '/main' },
-  { label: 'Vorsorge', icon: 'volunteer_activism', route: '/precaution' },
+  { label: 'Vorsorge', icon: 'volunteer_activism', route: '/overview' },
   { label: 'Profil', icon: 'person', route: '/profil' },
 ];
 
