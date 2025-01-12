@@ -1,6 +1,6 @@
 <template>
   <div>
-    <button @click="getUserJourney(journeyId)">Generate QR Code</button>
+    <button @click="getUserJourney(journeyId)">Export Journey</button>
 
     <!-- Popup Modal -->
     <div v-if="showPopup" class="modal-overlay" @click="closePopup">
