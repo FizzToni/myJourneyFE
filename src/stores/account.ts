@@ -174,5 +174,69 @@ export const useAccountStore = defineStore('account', {
       }
     },
 
+    async addVaccine(vaccinationData: any) {
+      const requestBody = {
+        user_id: this.user.account_id,
+        vaccine: vaccinationData,
+      };
+
+      try {
+        const response = await fetch('https://n8n.tonii.at/webhook/addVaccie', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(requestBody),
+        });
+
+        if (!response.ok) {
+          throw new Error('Failed to add vaccination');
+        }
+
+        // const data = await response.json();
+
+      } catch (error) {
+        console.error('Error adding vaccination:', error);
+      }
+    },
+
+    async addNodeToJourney(newNode: any) {
+      const url = "https://n8n.tonii.at/webhook-test/addNode";
+      const user_id = this.user.account_id;
+      const journey_id = 1;
+      const nodeData = generateNodeData();
+
+      const requestBody = {
+        user_id,
+        journey_id,
+        node: nodeData,
+      };
+
+      console.log("Node Data:", nodeData);
+
+      try {
+        const response = await fetch(url, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(requestBody),
+        });
+
+        if (response.ok) {
+          const data = await response.json();
+          console.log('Json response (should be old and updated user):', data[0]);
+        } else {
+          console.error('Failed to add node:', response.statusText);
+        }
+      } catch (error) {
+        console.error('Error adding node:', error);
+      }
+    },
+
+
+
+
+
   },
 });

@@ -2,8 +2,6 @@
 import { useAccountStore } from '@/stores/account';
 import { ref, onMounted } from 'vue';
 import {useRoute, useRouter} from 'vue-router';
-import Banner from "@/components/Banner/Banner.vue";
-import Navbar from "@/components/NavBar/Navbar.vue";
 import Modal from "@/components/Modal/Modal.vue";
 import JourneyNode from '@/components/JourneyNode.vue'
 import Wrapper from '@/components/AppWrapper.vue'
@@ -22,7 +20,9 @@ async function fetchJourneys() {
   const subJourneyId = route.query.journey_id || 0;
   const response = await accountStore.fetchJourney(subJourneyId);
 
-  journeys.value = response || [];
+  journeys.value = response;
+
+  console.log("Journeys fetched:", journeys.value);
 
   title.value = route.query.title;
   status.value = route.query.status;

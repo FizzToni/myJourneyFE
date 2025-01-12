@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue';
+import { useAccountStore } from '@/stores/account';
 import { Button } from '@/components/ui/button/index.ts';
 import {
   Card,
@@ -9,11 +10,12 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card/index.ts';
-
 import { Input } from '@/components/ui/input/index.ts';
 import { Label } from '@/components/ui/label/index.ts';
 import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { ScrollArea } from '@/components/ui/scroll-area'
+
+const accountStore = useAccountStore();
 
 // Node types for dropdown
 const types = ref(['Vaccination', 'Med. Institution', 'E-Health', 'Other']);
@@ -87,38 +89,6 @@ const generateVaccinationData = () => {
   return vaccinationData;
 };
 
-// Handle Add Vaccination
-const handleAddVaccination = async () => {
-  if (selectedType.value === 'Vaccination') {
-    const vaccinationData = generateVaccinationData();
-
-    const requestBody = {
-      user_id: '677ba8958eca95927318b059',
-      vaccine: vaccinationData,  // Include the vaccine data
-    };
-
-    const url = 'https://n8n.tonii.at/webhook/addVaccie';
-
-    try {
-      const response = await fetch(url, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(requestBody),
-      });
-
-      if (response.ok) {
-        const data = await response.json();
-      } else {
-        console.error('Failed to add vaccination:', response.statusText);
-      }
-    } catch (error) {
-      console.error('Error adding vaccination:', error);
-    }
-  }
-};
-
 // Function to handle button click based on selected type
 const handleAddNodeClick = () => {
   if (selectedType.value === 'Vaccination') {
@@ -128,10 +98,19 @@ const handleAddNodeClick = () => {
   }
 };
 
+
+// Handle Add Vaccination
+const handleAddVaccination = async () => {
+  const vaccinationData = generateVaccinationData();
+  await accountStore.addVaccine(vaccinationData);
+  //await accountStore.addNodeToJourney(vaccinationData)
+
+  // TODO: handle response
+};
+
 // The existing function for other node types
-const callAddNode = async () => {
-  const url = "https://n8n.tonii.at/webhook-test/addNode";
-  const user_id = '677ba8958eca95927318b059';
+async function callAddNode() {
+  const user_id = 404;
   const journey_id = 1;
   const nodeData = generateNodeData();
 
@@ -141,27 +120,9 @@ const callAddNode = async () => {
     node: nodeData,
   };
 
-  console.log("Node Data:", nodeData);
-
-  try {
-    const response = await fetch(url, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(requestBody),
-    });
-
-    if (response.ok) {
-      const data = await response.json();
-      console.log('Json response (should be old and updated user):', data[0]);
-    } else {
-      console.error('Failed to add node:', response.statusText);
-    }
-  } catch (error) {
-    console.error('Error adding node:', error);
-  }
-};
+  console.log("[Add Node]]", requestBody);
+  //const response = await accountStore.addNodeToJourney()
+}
 </script>
 
 <template>
