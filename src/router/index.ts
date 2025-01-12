@@ -12,6 +12,11 @@ import NodeDetail from '@/components/NodeDetail.vue'
 import AddNode from "@/components/AddNode.vue";
 import AddJourney from "@/components/AddJourney.vue";
 
+import Vaccines from '@/components/Vaccines.vue'
+import VaccineDetail from '@/components/VaccineDetail.vue'
+import VaccinesUser from '@/components/VaccinesUser.vue'
+import VaccineUserDetail from '@/components/VaccineUserDetail.vue'
+
 const routes = [
   { path: '/', redirect: '/login' }, // default to login page
   { path: '/login', name: 'Login', component: AuthPage },
@@ -24,6 +29,11 @@ const routes = [
   { path: '/search', name: 'Search', component: GlobalSearch },
   { path: '/overview', name: 'Overview', component: OverviewPage },
   { path: '/account/create', name: 'CreateAccount', component: CreateAccountPage },
+  { path: '/overview', name: 'Overview', component: OverviewPage },
+  { path: '/vaccines', name: 'Vaccines', component: Vaccines },
+  { path: '/vaccineDetail', name: 'VaccineDetail', component: VaccineDetail },
+  { path: '/vaccineUserDetail', name: 'VaccineUserDetail', component: VaccineUserDetail },
+  { path: '/vaccinesUser', name: 'VaccinesUser', component: VaccinesUser },
 ]
 
 const router = createRouter({
