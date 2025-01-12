@@ -5,7 +5,7 @@
       <slot>
         <div class="input-group">
           <label for="title">Title:</label>
-          <input type="text" id="title" v-model="nodeName" placeholder="Enter node name" />
+          <input type="text" id="title" v-model="journeyTitle" placeholder="Enter Journey Title" />
         </div>
         <div class="input-group">
           <label for="status">Status:</label>
@@ -14,20 +14,7 @@
             <option value="inactive">Inactive</option>
           </select>
         </div>
-        <section class="node-section">
-          <button class="add-node-button" @click="addNode">
-            Add Node
-          </button>
-          <ul class="node-list">
-            <li v-for="(node, index) in nodes" :key="index" class="node-item">
-              <span>{{ node.name }} ({{ node.status }})</span>
-              <button class="delete-node-button" @click="deleteNode(index)">
-                <i class="fas fa-trash"></i>
-              </button>
-            </li>
-          </ul>
-        </section>
-        <button class="add-node-button" @click="">
+        <button class="add-node-button" @click="saveJourney">
           Save
         </button>
       </slot>
@@ -36,32 +23,45 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from "vue";
+import {ref, watch} from "vue";
 
 // Reactive state
-const nodeName = ref(""); // Name of the node to be added
+const journeyTitle = ref(""); // Name of the node to be added
 const status = ref("active"); // Current status dropdown value
-const nodes = ref<{ name: string; status: string }[]>([]); // Array of nodes
-
-// Function to add a new node
-function addNode() {
-  if (nodeName.value.trim() !== "") {
-    nodes.value.push({ name: nodeName.value, status: status.value });
-    nodeName.value = ""; // Clear input field after adding
-  } else {
-    alert("Please enter a valid node name!");
-  }
-}
-
-// Function to delete a node
-function deleteNode(index: number) {
-  nodes.value.splice(index, 1); // Remove node at the specified index
-}
-
-defineProps<{
+const props = defineProps<{
   isVisible: boolean;
   onClose: () => void;
 }>();
+// Function to handle modal close logic
+// Function to send a POST request
+async function saveJourney() {
+  // Simple ID generation (could be from backend in real cases)
+  const nodeData = {
+    _id: "678175573b069098d0d222a4",  // Unique ID based on timestamp
+    title: journeyTitle.value,
+    status: status.value
+  };
+
+  try {
+    const response = await fetch("https://n8n.tonii.at/webhook/addJourney", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify(nodeData)
+    });
+
+    if (response.ok) {
+      const result = await response.json();
+      props.onClose();
+    } else {
+      console.error("Failed to save node.");
+    }
+  } catch (error) {
+    console.error("Error during POST request:", error);
+  }
+}
+
 </script>
 
 <style scoped>
@@ -91,7 +91,6 @@ defineProps<{
   display: flex;
   flex-direction: column;
   gap: 20px;
-  height: 70vh;
 }
 
 .close-button {
@@ -131,11 +130,6 @@ select:focus {
   border-color: #0EBE7E;
 }
 
-.node-section {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-}
 
 .add-node-button {
   align-self: flex-end;
@@ -159,43 +153,4 @@ select:focus {
   background-color: #0EBE7E;
 }
 
-.node-list {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-  border: 1px solid #ccc;
-  border-radius: 5px;
-  max-height: 150px;
-  overflow-y: auto;
-}
-
-.node-item {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 8px 12px;
-  border-bottom: 1px solid #ddd;
-  font-size: 14px;
-}
-
-.node-item:last-child {
-  border-bottom: none;
-}
-
-.delete-node-button {
-  background: none;
-  border: none;
-  cursor: pointer;
-  color: #f44336; /* Red color for delete icon */
-  font-size: 16px;
-  padding: 0;
-}
-
-.delete-node-button:hover {
-  color: darkred;
-}
-
-.delete-node-button i {
-  pointer-events: none; /* Ensure the icon itself does not interfere with button click */
-}
 </style>

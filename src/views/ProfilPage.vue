@@ -15,7 +15,7 @@ const router = useRouter();
 
 async function fetchUser() {
   try {
-    const id = '676c39fd5991fae62fcb1a63';
+    const id = '678175573b069098d0d222a4';
 
     const response = await fetch(`https://n8n.tonii.at/webhook/user?id=${id}`, {
       method: 'GET',
@@ -54,7 +54,7 @@ function goToHistory() {
         <div class="profile-header">
           <!-- User Image -->
           <img
-            src="@/assets/avatar.jpg"
+            src="@/assets/Sarah_müller.jpg"
             alt="User Profile"
             class="profile-image"
           />
@@ -96,7 +96,7 @@ function goToHistory() {
       <button class="justify-center" >History</button>
     </div>
     <!-- Navbar -->
-    <Navbar />
+    <Navbar option="Profil"/>
   </div>
 </template>
 

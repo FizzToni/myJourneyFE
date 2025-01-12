@@ -18,31 +18,34 @@
 
 
 <script setup lang="ts">
-import { ref } from 'vue';
+import {onMounted, ref} from 'vue';
 import { useRouter } from 'vue-router';
+const props = defineProps<{
+  option: string;
+}>();
 
 // Navigation items
 const navItems = [
-  { label: 'Journey', icon: 'timeline', route: '/main' },
-  { label: 'Vorsorge', icon: 'volunteer_activism', route: '/precaution' },
+  { label: 'MyJourney', icon: 'timeline', route: '/main' },
+  { label: 'Vorsorge', icon: 'volunteer_activism', route: '/overview' },
   { label: 'Profil', icon: 'person', route: '/profil' },
 ];
 
-// State to track the active item
-const activeItem = ref(navItems[0].label);
+const activeItem = ref(props.option);
 
 // Vue Router instance
 const router = useRouter();
 
 // Function to navigate and set the active item
 const navigateTo = (route: string, label: string) => {
-  activeItem.value = label; // Update the active item
 
   // Check if navigating to "/main" and remove parameters
   if (route === '/main') {
     window.location.replace('/main'); // Refresh the page
   } else {
     router.push(route); // Navigate to the specified route
+    activeItem.value = label; // Update the active item
+
   }
 };
 </script>

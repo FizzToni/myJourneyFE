@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ref, computed, defineEmits } from "vue";
 import { useRoute,useRouter } from "vue-router";
+import Export from "@/components/export/Export.vue";
 
 // Toggle state for showing the popup options
 const showOptions = ref(false);
@@ -10,7 +11,7 @@ const route = useRoute();
 const router = useRouter();
 
 const status =route.query.status; // Default status
-const id = "676c39fd5991fae62fcb1a63";
+const id = "678175573b069098d0d222a4";
 const journey_id = route.query.journey_id;
 
 const emit = defineEmits<{
@@ -35,7 +36,7 @@ function handleChangeStatus(option: string, status: string) {
   console.log("Clicked option:", option);
   triggerChangeStatusEvent(status === "active" ? "inactive" : "active");//data[0].status
 
-  const id = "676c39fd5991fae62fcb1a63"; // Example ID
+  const id = "678175573b069098d0d222a4"; // Example ID
   const journey_id = route.query.journey_id; // Extract journey_id from the route
 
   fetch("https://n8n.tonii.at/webhook/status", {
@@ -109,6 +110,7 @@ const isMainPage = computed(() => route.fullPath.endsWith("/main"));
         <button class="option" @click="handleAddNode('Add Node')">Add Node</button>
         <!-- Add Sub-Journey -->
         <button class="option" @click="handleCreateJourney('Create Sub-Journey')">Create Sub-Journey</button>
+        <export class="option" :journey-id=journey_id />
       </div>
     </div>
 
@@ -178,7 +180,7 @@ const isMainPage = computed(() => route.fullPath.endsWith("/main"));
 }
 
 .option {
-  background: rgba(255, 255, 255, 0); /* Fully transparent background */
+  background: rgba(255, 255, 255); /* Fully transparent background */
   color: #333333; /* Dark text */
   box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1); /* Subtle shadow */
   border-radius: 8px; /* Rounded corners */

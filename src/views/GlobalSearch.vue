@@ -44,7 +44,7 @@ const searchQuery = ref('');
 
 const fetchSearchResults = async (query: string) => {
   try {
-    const response = await fetch(`https://n8n.tonii.at/webhook/globalSearch?id=677ba8958eca95927318b059&name=${query}`);
+    const response = await fetch(`https://n8n.tonii.at/webhook/globalSearch?id=678175573b069098d0d222a4&name=${query}`);
 
     if (response.ok) {
       const data = await response.json();
