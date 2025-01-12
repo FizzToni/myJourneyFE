@@ -20,9 +20,8 @@ async function fetchJourneys() {
   const subJourneyId = route.query.journey_id || 0;
   const response = await accountStore.fetchJourney(subJourneyId);
 
-  journeys.value = response;
-
-  console.log("Journeys fetched:", journeys.value);
+  journeys.value = response[0].nodes || [];
+  console.log("Journeys fetched:", journeys);
 
   title.value = route.query.title;
   status.value = route.query.status;
@@ -92,6 +91,7 @@ function closeModal() {
       <p v-else class="min-h-[825px] text-center text-gray-500 font-semibold mt-8">No journeys available</p>
     </section>
     <AddButton
+      @node-added="fetchJourneys"
       @customEvent="handleCustomEvent"
       @createJourney="handleCreateJourneyEvent"
     />

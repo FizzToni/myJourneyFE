@@ -128,8 +128,8 @@ export const useAccountStore = defineStore('account', {
       }
     },
 
-    async fetchJourney(subJourneyId: any) {
-
+    async fetchJourney(journeyId: any) {
+      const subJourneyId = journeyId || 0;
       try {
         const id = this.user.account_id;
         const response = await fetch(`https://n8n.tonii.at/webhook/myjourney?id=${id}&journey_id=${subJourneyId}`, {
@@ -193,7 +193,7 @@ export const useAccountStore = defineStore('account', {
           throw new Error('Failed to add vaccination');
         }
 
-        // const data = await response.json();
+        return response.json();
 
       } catch (error) {
         console.error('Error adding vaccination:', error);
@@ -201,15 +201,16 @@ export const useAccountStore = defineStore('account', {
     },
 
     async addNodeToJourney(newNode: any) {
-      const url = "https://n8n.tonii.at/webhook-test/addNode";
+      console.log('Adding node:', newNode);
+      const url = "https://n8n.tonii.at/webhook/addNode";
       const user_id = this.user.account_id;
       const journey_id = 1;
-      const nodeData = generateNodeData();
+      const nodeData = newNode;
 
       const requestBody = {
         user_id,
         journey_id,
-        node: nodeData,
+        ...nodeData,
       };
 
       console.log("Node Data:", nodeData);

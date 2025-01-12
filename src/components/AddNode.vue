@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, computed } from 'vue';
+import { ref, computed, onMounted } from 'vue'
 import { useAccountStore } from '@/stores/account';
 import { Button } from '@/components/ui/button/index.ts';
 import {
@@ -12,8 +12,15 @@ import {
 } from '@/components/ui/card/index.ts';
 import { Input } from '@/components/ui/input/index.ts';
 import { Label } from '@/components/ui/label/index.ts';
-import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
-import { ScrollArea } from '@/components/ui/scroll-area'
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
+import { ScrollArea } from '@/components/ui/scroll-area';
 
 const accountStore = useAccountStore();
 
@@ -34,10 +41,8 @@ const fieldTemplates = {
     { label: 'Name', value: '' },
     { label: 'Reason', value: '' },
     { label: 'Stationary', value: false },
-    { label: 'Admission Date', value: '' },
-    { label: 'Release Date', value: '' },
+    { label: 'Date', value: '' },
     { label: 'Location', value: '' },
-    { label: 'Department', value: '' },
     { label: 'Diagnosis', value: '' },
     { label: 'Treatment', value: '' },
     { label: 'Notes Doctor', value: '' },
@@ -47,10 +52,8 @@ const fieldTemplates = {
     { label: 'Name', value: '' },
     { label: 'Reason', value: '' },
     { label: 'Stationary', value: false },
-    { label: 'Admission Date', value: '' },
-    { label: 'Release Date', value: '' },
+    { label: 'Date', value: '' },
     { label: 'Location', value: '' },
-    { label: 'Department', value: '' },
     { label: 'Diagnosis', value: '' },
     { label: 'Treatment', value: '' },
     { label: 'Notes Doctor', value: '' },
@@ -58,8 +61,8 @@ const fieldTemplates = {
   ],
   'Other': [
     { label: 'Name', value: '' },
-    { label: 'Admission Date', value: '' },
-    { label: 'Release Date', value: '' },
+    { label: 'Date', value: '' },
+    { label: 'Location', value: '' },
     { label: 'Notes Doctor', value: '' },
     { label: 'Notes Self', value: '' },
   ],
@@ -68,62 +71,60 @@ const fieldTemplates = {
 // Fields computed based on selected type
 const fields = computed(() => fieldTemplates[selectedType.value]);
 
-// Helper function to lowercase keys and format the node
-const formatNodeData = (fields) => {
-  return fields.reduce((acc, field) => {
-    acc[field.label.toLowerCase().replace(/ /g, '_')] = field.value;
+// Generate data dynamically for all node types
+const generateNodeData = () => {
+  const nodeData = fields.value.reduce((acc, field) => {
+    let formattedValue = field.value;
+
+    // Handle specific field types
+    if (field.label.includes('Date') && formattedValue === '') {
+      formattedValue = null; // Handle empty dates
+    }
+    if (typeof field.value === 'boolean') {
+      formattedValue = Boolean(field.value);
+    }
+
+    acc[field.label.toLowerCase().replace(/ /g, '_')] = formattedValue;
     return acc;
   }, {});
-};
 
-const generateVaccinationData = () => {
-  // Collect data for vaccination
-  const vaccinationData = {
-    name: fields.value[0].value,
-    details: fields.value[1].value,
-    date: fields.value[2].value,
-    location: fields.value[3].value,
-    dose: fields.value[4].value,
-  };
-
-  return vaccinationData;
+  return nodeData;
 };
 
 // Function to handle button click based on selected type
-const handleAddNodeClick = () => {
-  if (selectedType.value === 'Vaccination') {
-    handleAddVaccination(); // Handle Vaccination logic
-  } else {
-    callAddNode(); // Handle other node types
-  }
-};
-
-
-// Handle Add Vaccination
-const handleAddVaccination = async () => {
-  const vaccinationData = generateVaccinationData();
-  await accountStore.addVaccine(vaccinationData);
-  //await accountStore.addNodeToJourney(vaccinationData)
-
-  // TODO: handle response
-};
-
-// The existing function for other node types
-async function callAddNode() {
-  const user_id = 404;
-  const journey_id = 1;
+const handleAddNodeClick = async () => {
   const nodeData = generateNodeData();
 
+  if (selectedType.value === 'Vaccination') {
+    await handleAddVaccination(nodeData);
+  } else {
+    await handleAddGenericNode(nodeData);
+  }
+  await accountStore.fetchJourney();
+  emit("node-added");
+};
+
+// Handle Add Vaccination
+async function handleAddVaccination(vaccinationData) {
+  await accountStore.addVaccine(vaccinationData);
+  await handleAddGenericNode(vaccinationData);
+
+  // TODO: handle response
+}
+
+// Handle Add for Generic Nodes
+async function handleAddGenericNode(nodeData) {
+  console.log(nodeData)
+
   const requestBody = {
-    user_id,
-    journey_id,
     node: nodeData,
   };
+  await accountStore.addNodeToJourney(requestBody);
 
-  console.log("[Add Node]]", requestBody);
-  //const response = await accountStore.addNodeToJourney()
+  // TODO: handle response
 }
 </script>
+
 
 <template>
   <ScrollArea class="h-[500px]">
@@ -161,7 +162,7 @@ async function callAddNode() {
             @change="field.value = $event.target.type === 'checkbox' ? $event.target.checked : $event.target.value"
           />
 
-          <!-- Date Picker for 'Date' field -->
+          <!-- TODO: add default date today -->
           <Input
             v-if="field.label === 'Date'"
             v-model="field.value"
@@ -169,6 +170,7 @@ async function callAddNode() {
             type="date"
             class="w-full mt-2 p-2 border rounded-md"
           />
+
 
           <!-- Numeric Input for 'Dose' field -->
           <Input
