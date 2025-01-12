@@ -12,6 +12,8 @@ import {
 
 import { Input } from '@/components/ui/input/index.ts';
 import { Label } from '@/components/ui/label/index.ts';
+import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
+import { ScrollArea } from '@/components/ui/scroll-area'
 
 // Node types for dropdown
 const types = ref(['Vaccination', 'Med. Institution', 'E-Health', 'Other']);
@@ -163,63 +165,65 @@ const callAddNode = async () => {
 </script>
 
 <template>
-  <Card>
-    <CardHeader>
-      <CardTitle>New Node</CardTitle>
-      <CardDescription>Add a new node to your journey.</CardDescription>
-    </CardHeader>
+  <ScrollArea class="h-[500px]">
+      <CardHeader>
+        <CardTitle>New Node</CardTitle>
+        <CardDescription>Add a new node to your journey.</CardDescription>
+      </CardHeader>
 
-    <CardContent>
-      <div class="mb-4">
-        <Label for="type">Type</Label>
-        <select
-          v-model="selectedType"
-          id="type"
-          class="w-full mt-2 p-2 border rounded-md"
-        >
-          <option v-for="type in types" :key="type" :value="type">{{ type }}</option>
-        </select>
-      </div>
+      <CardContent>
+        <div class="mb-4">
+          <Label for="type">Type</Label>
+          <Select default-value="Vaccination" v-model="selectedType"
+          >
+            <SelectTrigger
+            id="type"
+            class="w-full mt-2 p-2 border rounded-md"
+            >
+              <SelectValue placeholder="Select type"/>
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem v-for="type in types" :key="type" :value="type">{{ type }}</SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
 
-      <div v-for="(field, index) in fields" :key="index" class="mb-4">
-        <Label :for="'field' + index">{{ field.label }}</Label>
-        <Input
-          v-if="field.label !== 'Dose' && field.label !== 'Date'"
-          v-model="field.value"
-          :id="'field' + index"
-          :type="typeof field.value === 'boolean' ? 'checkbox' : 'text'"
-          class="w-full mt-2 p-2 border rounded-md"
-          :checked="field.value === true"
-          @change="field.value = $event.target.type === 'checkbox' ? $event.target.checked : $event.target.value"
-        />
+        <div v-for="(field, index) in fields" :key="index" class="mb-4">
+          <Label :for="'field' + index">{{ field.label }}</Label>
+          <Input
+            v-if="field.label !== 'Dose' && field.label !== 'Date'"
+            v-model="field.value"
+            :id="'field' + index"
+            :type="typeof field.value === 'boolean' ? 'checkbox' : 'text'"
+            class="w-full mt-2 p-2 border rounded-md"
+            :checked="field.value === true"
+            @change="field.value = $event.target.type === 'checkbox' ? $event.target.checked : $event.target.value"
+          />
 
-        <!-- Date Picker for 'Date' field -->
-        <Input
-          v-if="field.label === 'Date'"
-          v-model="field.value"
-          :id="'field' + index"
-          type="date"
-          class="w-full mt-2 p-2 border rounded-md"
-        />
+          <!-- Date Picker for 'Date' field -->
+          <Input
+            v-if="field.label === 'Date'"
+            v-model="field.value"
+            :id="'field' + index"
+            type="date"
+            class="w-full mt-2 p-2 border rounded-md"
+          />
 
-        <!-- Numeric Input for 'Dose' field -->
-        <Input
-          v-if="field.label === 'Dose'"
-          v-model="field.value"
-          :id="'field' + index"
-          type="number"
-          class="w-full mt-2 p-2 border rounded-md"
-          min="1"
-          step="1"
-        />
-      </div>
-    </CardContent>
+          <!-- Numeric Input for 'Dose' field -->
+          <Input
+            v-if="field.label === 'Dose'"
+            v-model="field.value"
+            :id="'field' + index"
+            type="number"
+            class="w-full mt-2 p-2 border rounded-md"
+            min="1"
+            step="1"
+          />
+        </div>
+      </CardContent>
 
-    <CardFooter>
-      <Button @click="handleAddNodeClick" class="w-full">Add Node</Button>
-    </CardFooter>
-  </Card>
+      <CardFooter>
+        <Button @click="handleAddNodeClick" class="w-full">Add Node</Button>
+      </CardFooter>
+  </ScrollArea>
 </template>
-
-<style scoped>
-</style>

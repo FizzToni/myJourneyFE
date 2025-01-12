@@ -57,7 +57,7 @@ function goToHistory() {
         <div class="flex w-max m-auto min-h-10">
           <img
             class="profile-image"
-            src="https://randomuser.me/api/portraits"
+            src="@/assets/avatar.jpg"
             alt="Profile Image"
           >
         </div>

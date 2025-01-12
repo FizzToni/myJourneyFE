@@ -1,268 +1,146 @@
 <template>
-    <!-- Banner -->
-    <banner title="Overview" status="" :on-refresh="fetchJourneys"/>
+  <!-- Banner -->
+  <AppWrapper title="Overview" status="" :on-refresh="fetchJourneys" >
 
-    <div class="actual-content">
-      <div class="safe-area">
-      <div class="container">
-        <div class="container-content">
-          <div class="row">
-            <div class="info">
-              <div class="flex-between">
-                <h2 class="headline">Vaccination Tracker</h2>
-                <i class="material-icons"
-                   @click="handleUserVaccineClick()">
-                  >
-                </i>
-              </div>
-              <p class="description">
-                Keep track of your vaccinations easily and stay informed.
-              </p>
-            </div>
-          </div>
-          <div class="row">
-            <div class="info">
-              <h3 class="number" v-if="vaccines">
-                {{ vaccines.length }}
-              </h3>
-              <p class="description">View your complete vaccination history.</p>
-            </div>
-            <div class="info">
-              <p class="notification bg-red">12 new</p>
-              <p class="description">
-                Discover more insights and recommendations.
-              </p>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
+    <Card class="relative" @click="handleUserVaccineClick">
+      <div class="absolute top-2 right-2 w-3 h-3 bg-red-500 rounded-full animate-ping "/>
+      <CardHeader>
+          <CardTitle>
+            Deine Impfungen
+          </CardTitle>
+          <CardDescription>
+            Behalte deine Impfungen einfach im Blick und bleibe über neue Angebote informiert.
+          </CardDescription>
+        </CardHeader>
 
-        <div class="list-view">
-          <div
-            v-for="(item, index) in nodes"
-            :key="index"
-            class="container padded flex-basis-30"
-            @click="item.onClick"
-          >
-            <div>
-              <h3 class="number">{{ item.number }}</h3>
-              <p class="description">{{ item.text }}</p>
-            </div>
-          </div>
-        </div>
-
-      <div>
-      <div class="list-view">
-        <div
-          v-for="(journey, index) in journeys"
-          :key="index"
-          class="container journey-card"
-          @click="handleJourneyClick(journey.journey_id)"
-        >
+      <CardContent>
+        <div class="flex justify-between items-center gap-2">
           <div>
-            <h3 class="number">{{ journey.nodes.length }}</h3>
-            <p class="description">{{ journey.title }}</p>
-            <p class="description">{{ journey.status }}</p>
+            <h3 class="text-lg font-bold" v-if="vaccines">{{ vaccines.length }}</h3>
+            <p class="text-sm">erhaltene Impfungen</p>
+          </div>
+          <div>
+            <h3 class="text-lg font-bold">12</h3>
+            <p class="bg-red-500 text-white rounded px-2 py-1 text-sm">neue Verfügbar</p>
           </div>
         </div>
-      </div>
+      </CardContent>
+    </Card>
+
+    <Separator class="my-4"/>
+
+    <div class="flex gap-2 justify-between">
+      <Card
+        v-for="(item, index) in nodes"
+        class="flex-1 min-h-0 w-1/3"
+        :key="index"
+        @click="item.onClick"
+      >
+        <CardContent class="">
+          <div class="flex flex-col">
+            <h3 class="text-lg font-bold">{{ item.number }}</h3>
+            <p class="text-sm">{{item.text}}</p>
+          </div>
+        </CardContent>
+      </Card>
     </div>
 
+    <Separator class="my-4"/>
+
+    <div class="flex gap-2 justify-between">
+      <Card
+        v-for="(journey, index) in journeys"
+        :key="index"
+        class=""
+        @click="handleJourneyClick(journey.journey_id)"
+      >
+        <CardContent class="">
+          <div>
+            <h3 class="text-lg font-bold">{{ journey.nodes.length }}</h3>
+            <p class="text-sm">{{ journey.title }}</p>
+            <p class="text-sm">{{ journey.status }}</p>
+          </div>
+        </CardContent>
+      </Card>
     </div>
 
-    <!-- Navbar -->
-    <navbar/>
+  </AppWrapper>
 </template>
 
-<script>
-import Banner from "@/components/banner/banner.vue";
-import Navbar from "@/components/navbar/Navbar.vue";
-import Addbutton from "@/components/addbutton/Addbutton.vue";
-import Modal from "@/components/Modal/Modal.vue";
+<script setup lang="ts">
+import { ref, onMounted } from "vue";
+import AppWrapper from '@/components/AppWrapper.vue';
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
+import { Separator } from '@/components/ui/separator'
 
-let user_id = ''
-export default {
-  components: {
-    Banner,
-    Navbar,
-    Addbutton,
-    Modal,
-  },
-  data() {
-    return {
-      nodes: [],
-      journeys: [],
-      vaccines: [],
+const nodes = ref<{ number: number; text: string; onClick: () => void }[]>([]);
+const journeys = ref<{ status: string; id: string }[]>([]);
+const vaccines = ref<any[]>([]); // Adjust type based on actual vaccine structure
+const userId = "677ba8958eca95927318b059";
+
+const fetchJourneys = async () => {
+  try {
+    const response = await fetch(
+      `https://n8n.tonii.at/webhook/getDataForOverview?id=${userId}`
+    );
+    const data = await response.json();
+
+    if (data && data[0] && data[0].journeys) {
+      journeys.value = data[0].journeys.filter((journey: any) => journey.status === "active");
+      vaccines.value = data[0].vaccines;
     }
-  },
-  methods: {
-    async fetchJourneys() {
-      try {
-        let adresse = 'https://n8n.tonii.at/webhook/getDataForOverview?id=' + user_id
-        const response = await fetch(adresse)
-        const data = await response.json()
-        if (data && data[0] && data[0].journeys) {
-          for (let i = 0; i < data[0].journeys.length; i++) {
-            if (data[0].journeys[i].status === "active"){
-              this.journeys.push(data[0].journeys[i]);
-            }
-          }
-          this.vaccines = data[0].vaccines
-        }
 
-        adresse = 'https://n8n.tonii.at/webhook/getAllVaccine'
-        const response2 = await fetch(adresse)
-        const vaccines = await response2.json()
-        if (vaccines) {
-          this.nodes.push({
-            number: vaccines.length,
-            text: 'Vaccination',
-            onClick: this.handleVaccineClick
-          })
-          this.nodes.push({
-            number: 0,
-            text: 'Node 2',
-            onClick: this.handlePrecautionClick
-          })
-          this.nodes.push({
-            number: 0,
-            text: 'Node 3',
-            onClick: this.handleMedicationClick
-          })
-        }
-      } catch (error) {
-        console.error('Error fetching journeys:', error)
-      }
-    },
-    handleUserVaccineClick() {
-      window.location.replace('/vaccinesUser');
-    },
-    handleVaccineClick() {
-      window.location.replace('/vaccines');
-    },
-    handlePrecautionClick() {
-      console.log('User ID:' + user_id)
-      console.log('Precaution popup triggered.')
-    },
-    handleMedicationClick() {
-      console.log('User ID:' + user_id)
-      console.log('Medication popup triggered.')
-    },
-    handleJourneyClick(journeyId) {
-      console.log('User ID:' + user_id)
-      console.log('Journey ID:', journeyId)
-    },
-  },
-  mounted() {
-    user_id = '677ba8958eca95927318b059'
-    this.fetchJourneys()
+    const response2 = await fetch("https://n8n.tonii.at/webhook/getAllVaccine");
+    const vaccineData = await response2.json();
+
+    if (vaccineData) {
+      nodes.value = [
+        {
+          number: vaccineData.length,
+          text: "Vaccination",
+          onClick: handleVaccineClick,
+        },
+        {
+          number: 0,
+          text: "Node 2",
+          onClick: handlePrecautionClick,
+        },
+        {
+          number: 0,
+          text: "Node 3",
+          onClick: handleMedicationClick,
+        },
+      ];
+    }
+  } catch (error) {
+    console.error("Error fetching journeys:", error);
   }
-}
+};
+
+const handleUserVaccineClick = () => {
+  window.location.replace("/vaccinesUser");
+};
+
+const handleVaccineClick = () => {
+  window.location.replace("/vaccines");
+};
+
+const handlePrecautionClick = () => {
+  console.log("User ID:", userId);
+  console.log("Precaution popup triggered.");
+};
+
+const handleMedicationClick = () => {
+  console.log("User ID:", userId);
+  console.log("Medication popup triggered.");
+};
+
+const handleJourneyClick = (journeyId: string) => {
+  console.log("User ID:", userId);
+  console.log("Journey ID:", journeyId);
+};
+
+onMounted(() => {
+  fetchJourneys();
+});
 </script>
-
-
-<style scoped>
-.list-view {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-  padding: 8px;
-  justify-content: space-between;
-}
-
-.container {
-  background: linear-gradient(to bottom right, #0EBE7E, #07D9AD);
-  margin: 0;
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-start;
-  box-sizing: border-box;
-  flex: 0 0 auto;
-  border-radius: 8px;
-}
-
-.container.padded {
-  padding: 16px;
-}
-
-.container.flex-basis-30 {
-  flex: 0 0 calc((100%) * 0.32);
-}
-
-.journey-card {
-  box-sizing: border-box;
-  padding: 16px;
-  flex: 0 0 calc(50% - 8px);
-}
-
-.number {
-  color: black;
-  font-size: 20px;
-  margin: 0;
-}
-
-.safe-area {
-  padding: 8px;
-}
-
-.container-content {
-  padding: 0;
-  gap: 8px;
-}
-
-.row {
-  justify-content: space-between;
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  gap: 8px;
-}
-
-.info {
-  padding: 8px;
-}
-
-.flex-between {
-  display: flex;
-  justify-content: space-between;
-}
-
-.headline {
-  font-size: 24px;
-  margin: 0;
-  color: black;
-}
-
-.description {
-  font-size: 14px;
-  margin: 4px 0 0 0;
-  color: black;
-}
-
-.material-icons {
-  font-size: 24px;
-}
-
-.notification {
-  color: white;
-  font-size: 0.75em;
-  display: inline-block;
-  padding: 2px;
-  font-weight: bold;
-  border-radius: 8px;
-  white-space: nowrap;
-}
-
-.notification.bg-red {
-  background-color: red;
-}
-
-.actual-content {
-  /*das muss sich dynamisch anpassen (falls mehr als 6 journeys angezeigt werden)*/
-  max-height: calc(100vh - 92px - 123px);
-  overflow-y: auto;
-  box-sizing: border-box;
-}
-
-</style>

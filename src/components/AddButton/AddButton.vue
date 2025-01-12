@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import { ref, computed, defineEmits } from "vue";
 import { useRoute,useRouter } from "vue-router";
+import { Drawer, DrawerContent, DrawerTrigger } from '@/components/ui/drawer'
+import AddNode from '@/components/AddNode.vue'
 
 // Toggle state for showing the popup options
 const showOptions = ref(false);
@@ -89,6 +91,7 @@ const isMainPage = computed(() => route.fullPath.endsWith("/main"));
 </script>
 
 <template>
+  <Drawer>
   <div class="main-container">
     <!-- Existing content -->
     <div class="journey-content">
@@ -106,13 +109,19 @@ const isMainPage = computed(() => route.fullPath.endsWith("/main"));
         <!-- Change active/inactive -->
         <button v-if="!isMainPage" class="option" @click="handleChangeStatus('Change Status', <string>status)">Change Status</button>
         <!-- Add Node -->
-        <button class="option" @click="handleAddNode('Add Node')">Add Node</button>
+        <DrawerTrigger>
+          <button class="option" @click="handleAddNode('Add Node')">Add Node</button>
+        </DrawerTrigger>
         <!-- Add Sub-Journey -->
         <button class="option" @click="handleCreateJourney('Create Sub-Journey')">Create Sub-Journey</button>
       </div>
     </div>
 
   </div>
+    <DrawerContent>
+      <AddNode />
+    </DrawerContent>
+  </Drawer>
 </template>
 
 
