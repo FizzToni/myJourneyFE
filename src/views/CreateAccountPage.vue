@@ -17,11 +17,12 @@ import {
 import { Checkbox } from '@/components/ui/checkbox'
 import router from '@/router'
 
+const currentStep = ref(1)
+
 const firstName = ref('')
 const lastName = ref('')
 const birthYear = ref('')
 const gender = ref('')
-const currentStep = ref(1)
 const vaccinesReceived = ref<string[]>([])
 const bloodDetails = ref<string[]>([])
 const otherTrackables = ref<string[]>([])

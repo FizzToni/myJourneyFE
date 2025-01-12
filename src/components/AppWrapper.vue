@@ -2,6 +2,7 @@
   <div class="fixed inset-0 flex flex-col bg-gradient-to-br from-green-100 via-white to-blue-100">
     <Banner
       v-if="banner"
+      :image="image"
       :title="title"
       :status="status"
       :on-refresh="onRefresh"
@@ -22,6 +23,10 @@ import Banner from '@/components/Banner/Banner.vue'
 
 // Props
 defineProps({
+  image: {
+    type: Boolean,
+    default: true
+  },
   title: {
     type: String,
     default: ''

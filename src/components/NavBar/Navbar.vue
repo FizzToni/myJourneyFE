@@ -27,7 +27,7 @@ import { useRouter } from 'vue-router';
 const navItems = [
   { label: 'Journey', icon: 'timeline', route: '/main' },
   { label: 'Vorsorge', icon: 'volunteer_activism', route: '/overview' },
-  { label: 'Profil', icon: 'person', route: '/profile' },
+  { label: 'Account', icon: 'person', route: '/profile' },
 ];
 
 const activeItem = ref(navItems[0].label);

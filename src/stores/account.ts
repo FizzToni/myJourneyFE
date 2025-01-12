@@ -107,18 +107,20 @@ export const useAccountStore = defineStore('account', {
           throw new Error('Set Account Details failed');
         }
 
+        const data = await response.json();
+
         this.user = {
           ...this.user,
-          name: response.name,
-          surname: response.surname,
-          birthYear: response.birthYear,
-          gender: response.gender,
-          vaccines: response.vaccines,
-          bloodWork: response.bloodWork,
-          otherTrackables: response.otherTrackables
+          name: data.name,
+          surname: data.surname,
+          birthYear: data.birthYear,
+          gender: data.gender,
+          vaccines: data.vaccines,
+          bloodWork: data.bloodWork,
+          otherTrackables: data.otherTrackables
         }
 
-        return response.json();
+        return data.json();
 
       } catch (error) {
         console.error('[Account] Failed to update account details:', error);

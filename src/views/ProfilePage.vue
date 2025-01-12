@@ -1,21 +1,42 @@
 <script setup lang="ts">
 import { useAccountStore } from '@/stores/account';
 import { ref, onMounted } from 'vue';
-
 import {useRoute, useRouter} from 'vue-router';
-import Banner from "@/components/Banner/Banner.vue";
-import { Card, CardDescription, CardTitle } from '@/components/ui/card'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import Wrapper from '@/components/AppWrapper.vue'
-
-const user = ref<any>(null); // Store user data
-
-const router = useRouter();
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
+import { EditIcon, MaximizeIcon } from '@/components/icons'
+import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
+import { Checkbox } from '@/components/ui/checkbox'
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible'
+import { Button } from '@/components/ui/button'
 
 const accountStore = useAccountStore();
+const router = useRouter();
+const isOpen = ref(false);
+
+const firstName = ref('');
+const lastName = ref('');
+const birthYear = ref('');
+const gender = ref('');
+const vaccinesReceived = ref<string[]>([]);
+const bloodDetails = ref<string[]>([]);
+const otherTrackables = ref<string[]>([]);
+
 
 async function fetchUser() {
   const response = await accountStore.fetchUserDetails();
-  user.value = response[0] || [];
+  const user = response[0] || {};
+
+  firstName.value = user.name || '';
+  lastName.value = user.surname || '';
+  birthYear.value = user.birthYear || '';
+  gender.value = user.gender || '';
+  vaccinesReceived.value = user.vaccines || [];
+  bloodDetails.value = user.bloodWork || [];
+  otherTrackables.value = user.otherTrackables || [];
+
 }
 
 onMounted(() => {
@@ -29,53 +50,99 @@ function goToHistory() {
 </script>
 
 <template>
-  <Wrapper title="Profil" status="" :on-refresh="fetchUser">
-    <Card>
-      <div v-if="user">
-      <!-- Profile Section -->
-        <div class="profile-section">
-          <div class="profile-header">
-            <!-- User Image -->
-            <img
-              src="@/assets/avatar.jpg"
-              alt="User Profile"
-              class="profile-image"
-            />
-            <!-- Name and Surname -->
-            <div class="profile-name">
-              <p v-if="user.name" class="name"><strong>{{ user.name }}</strong></p>
-              <p v-if="user.surname" class="surname"><strong>{{ user.surname }}</strong></p>
-            </div>
+  <Wrapper title="Account" status="" :on-refresh="fetchUser" :image="false">
+    <Card class="relative mt-10">
+      <CardHeader>
+        <EditIcon class="absolute top-4 right-4 drop-shadow-md"/>
+        <div class="flex w-max m-auto min-h-10">
+          <img
+            class="profile-image"
+            src="https://randomuser.me/api/portraits"
+            alt="Profile Image"
+          >
+        </div>
+      </CardHeader>
+      <CardContent class="flex flex-col gap-y-4 mb-2">
+        <CardTitle>Persönliche Informationen</CardTitle>
+          <div class="grid w-full max-w-sm items-center gap-1.5 text-gray-600">
+            <Label for="first_name">Vorname</Label>
+            <Input id="first_name" type="text" placeholder="Dein Name" v-model="firstName" />
           </div>
-
-          <!-- Email and Password -->
-          <div class="user-details">
-            <p v-if="user.email"><strong>Email:</strong> {{ user.email }}</p>
-            <p v-if="user.password"><strong>Password:</strong> ******</p>
+        <div class="grid w-full max-w-sm items-center gap-1.5 text-gray-600">
+            <Label for="last_name">Nachname</Label>
+            <Input id="last_name" type="text" placeholder="Dein Nachname" v-model="lastName" />
           </div>
-
-          <!-- Options -->
-          <div class="preferences">
-            <div class="preference">
-              <label for="vaccination_opt">Vaccination</label>
-              <input id="vaccination_opt" type="checkbox" v-model="user.vaccination_opt" />
-            </div>
-            <div class="preference">
-              <label for="bloodwork_opt">Bloodwork</label>
-              <input id="bloodwork_opt" type="checkbox" v-model="user.bloodwork_opt" />
-            </div>
-            <div class="preference">
-              <label for="precaution_opt">Precaution</label>
-              <input id="precaution_opt" type="checkbox" v-model="user.precaution_opt" />
-            </div>
-            <div class="preference">
-              <label for="plasma_donation_opt">Plasma Donation</label>
-              <input id="plasma_donation_opt" type="checkbox" v-model="user.plasma_donation_opt" />
-            </div>
+        <div class="flex gap-4 ">
+          <div class="grid w-full max-w-sm items-center gap-1.5 text-gray-600">
+            <Label for="birth_year">Geburtsjahr</Label>
+            <Input id="birth_year" type="number" placeholder="yyyy" v-model="birthYear"  />
+          </div>
+          <div class="grid w-full max-w-sm items-center gap-1.5 text-gray-600">
+            <Label for="gender">Geschlecht</Label>
+            <Select v-model="gender">
+              <SelectTrigger>
+                <SelectValue/>
+              </SelectTrigger>
+              <SelectContent>
+                <SelectGroup>
+                  <SelectItem value="diverse">diverse</SelectItem>
+                  <SelectItem value="female">female</SelectItem>
+                  <SelectItem value="male">male</SelectItem>
+                </SelectGroup>
+              </SelectContent>
+            </Select>
           </div>
         </div>
-      </div>
+      </CardContent>
     </Card>
+
+    <Card class="relative mt-2">
+      <Collapsible v-model:open="isOpen">
+        <CollapsibleTrigger class="w-full">
+          <Button variant="ghost" class="w-full justify-between">
+            Vorsorge Einstellungen
+            <MaximizeIcon />
+          </Button>
+        </CollapsibleTrigger>
+
+        <CollapsibleContent>
+          <CardContent>
+            <Label class="text-gray-600">Impfungen</Label>
+            <ul class="list-none ml-2 mb-3">
+              <li v-if="vaccinesReceived.length === 0" class="text-sm text-gray-500">
+                Keine gewählt
+              </li>
+              <li v-else v-for="(vaccine, index) in vaccinesReceived" :key="index" class="text-sm">
+                {{ vaccine }}
+              </li>
+            </ul>
+
+            <!-- Blood Work -->
+            <Label class="text-gray-600">Blutbild</Label>
+            <ul class="list-none ml-2 mb-3">
+              <li v-if="bloodDetails.length === 0" class="text-sm text-gray-500">
+                Keine gewählt
+              </li>
+              <li v-else v-for="(blood, index) in bloodDetails" :key="index" class="text-sm">
+                {{ blood }}
+              </li>
+            </ul>
+
+            <!-- Other Trackables -->
+            <Label class="text-gray-600">Interessen</Label>
+            <ul class="list-none ml-2 mb-3">
+              <li v-if="otherTrackables.length === 0" class="text-sm text-gray-500">
+                Keine gewählt
+              </li>
+              <li v-else v-for="(trackable, index) in otherTrackables" :key="index" class="text-sm">
+                {{ trackable }}
+              </li>
+            </ul>
+          </CardContent>
+        </CollapsibleContent>
+      </Collapsible>
+    </Card>
+
     <div class="button-container" @click="goToHistory">
       <button class="justify-center" >History</button>
     </div>
@@ -83,32 +150,6 @@ function goToHistory() {
 </template>
 
 <style scoped>
-/* General Layout */
-.main-container {
-  display: flex;
-  flex-direction: column;
-  height: 100vh; /* Full viewport height */
-  user-select: none;
-
-}
-
-.profile-section {
-  width: 90%;
-  background: white;
-  padding: 20px;
-  border-radius: 10px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  margin: 20px auto;
-
-}
-
-/* Profile Header */
-.profile-header {
-  display: flex;
-  align-items: center;
-  width: 100%;
-  margin-bottom: 20px;
-}
 
 .profile-image {
   width: 80px;
@@ -118,40 +159,10 @@ function goToHistory() {
   object-fit: cover;
 }
 
-.profile-name {
-  margin-left: 20px;
-  display: flex;
-  flex-direction: column;
-}
 
-.name,
-.surname {
-  margin: 0;
-  font-size: 1.2rem;
-}
-
-/* User Details */
-.user-details {
-  width: 100%;
-  margin-bottom: 20px;
-}
 
 .user-details p {
   margin: 5px 0;
-}
-
-/* Preferences Section */
-.preferences {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  width: 100%;
-}
-
-.preference {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
 }
 
 .preference label {

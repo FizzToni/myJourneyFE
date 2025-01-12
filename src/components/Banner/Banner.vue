@@ -1,6 +1,7 @@
 <script setup lang="ts">
 // Define props using the defineProps helper
 defineProps<{
+  image: boolean;
   title: string;
   status: string; // 'active' or 'inactive'
   onRefresh: () => void;
@@ -18,7 +19,7 @@ const bannerStyle = computed(() => {
 
 <template>
   <div
-    class="sticky top-0 left-0 w-full flex items-center justify-between p-6 rounded-b-xl shadow-md z-50"
+    class="sticky min-h-28 top-0 left-0 w-full flex items-center justify-between p-6 rounded-b-xl shadow-md z-50"
     :class="bannerStyle"
   >
     <div class="flex flex-col min-h-14">
@@ -26,6 +27,7 @@ const bannerStyle = computed(() => {
       <p class="text-lg">{{ title }}</p>
     </div>
     <img
+      v-if="image"
       src="@/assets/avatar.jpg"
       alt="User Profile"
       class="w-16 h-16 rounded-full border object-cover"
