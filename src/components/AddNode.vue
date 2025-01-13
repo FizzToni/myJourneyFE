@@ -1,6 +1,6 @@
 <script setup>
-import { ref, computed } from 'vue';
-import { Button } from '@/components/ui/button/index.ts';
+import {ref, computed, onMounted} from 'vue';
+import {Button} from '@/components/ui/button/index.ts';
 import {
   Card,
   CardContent,
@@ -9,13 +9,18 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card/index.ts';
+import {Input} from '@/components/ui/input/index.ts';
+import {Label} from '@/components/ui/label/index.ts';
 
-import { Input } from '@/components/ui/input/index.ts';
-import { Label } from '@/components/ui/label/index.ts';
+// Replace with logic to dynamically get userID.
+const USER_ID = '677ba8958eca95927318b059';
 
 // Node types for dropdown
 const types = ref(['Vaccination', 'Med. Institution', 'E-Health', 'Other']);
 const selectedType = ref(types.value[0]);
+
+const journeys = ref([]); // Holds the journey options
+const selectedJourney = ref(null); // Selected journey
 
 // Type mappings for backend node creation.
 const reverseTypeMappings = {
@@ -28,40 +33,40 @@ const reverseTypeMappings = {
 // Default field sets based on the node type
 const fieldTemplates = {
   'Vaccination': [
-    { label: 'Name', value: 'vaccineName' },
-    { label: 'Details', value: 'here are some extra details' },
-    { label: 'Date', value: '01.01.2020' },
-    { label: 'Location', value: 'Karlsplatz 1' },
-    { label: 'Dose', value: 1 },
+    {label: 'Name', value: 'vaccineName'},
+    {label: 'Details', value: 'here are some extra details'},
+    {label: 'Date', value: '2020-01-01'},
+    {label: 'Location', value: 'Karlsplatz 1'},
+    {label: 'Dose', value: 1},
   ],
   'Med. Institution': [
-    { label: 'Name', value: '' },
-    { label: 'Reason', value: '' },
-    { label: 'Stationary', value: false },
-    { label: 'Date', value: '' },
-    { label: 'Location', value: '' },
-    { label: 'Department', value: '' },
-    { label: 'Diagnosis', value: '' },
-    { label: 'Treatment', value: '' },
-    { label: 'Notes Doctor', value: '' },
-    { label: 'Notes Self', value: '' },
+    {label: 'Name', value: ''},
+    {label: 'Reason', value: ''},
+    {label: 'Stationary', value: false},
+    {label: 'Date', value: ''},
+    {label: 'Location', value: ''},
+    {label: 'Department', value: ''},
+    {label: 'Diagnosis', value: ''},
+    {label: 'Treatment', value: ''},
+    {label: 'Notes Doctor', value: ''},
+    {label: 'Notes Self', value: ''},
   ],
   'E-Health': [
-    { label: 'Name', value: '' },
-    { label: 'Reason', value: '' },
-    { label: 'Date', value: '' },
-    { label: 'Location', value: '' },
-    { label: 'Department', value: '' },
-    { label: 'Diagnosis', value: '' },
-    { label: 'Treatment', value: '' },
-    { label: 'Notes Doctor', value: '' },
-    { label: 'Notes Self', value: '' },
+    {label: 'Name', value: ''},
+    {label: 'Reason', value: ''},
+    {label: 'Date', value: ''},
+    {label: 'Location', value: ''},
+    {label: 'Department', value: ''},
+    {label: 'Diagnosis', value: ''},
+    {label: 'Treatment', value: ''},
+    {label: 'Notes Doctor', value: ''},
+    {label: 'Notes Self', value: ''},
   ],
   'Other': [
-    { label: 'Name', value: '' },
-    { label: 'Date', value: '' },
-    { label: 'Notes Doctor', value: '' },
-    { label: 'Notes Self', value: '' },
+    {label: 'Name', value: ''},
+    {label: 'Date', value: ''},
+    {label: 'Notes Doctor', value: ''},
+    {label: 'Notes Self', value: ''},
   ],
 };
 
@@ -85,72 +90,65 @@ const generateVaccinationData = () => {
     location: fields.value[3].value,
     dose: fields.value[4].value,
   };
-
   return vaccinationData;
+};
+
 const generateNodeData = () => {
   const nodeData = formatNodeData(fields.value);
   const idKey = '_id';
   const idValue = null;
   const typeKey = 'type';
-  const typeValue = reverseTypeMappings[selectedType.value] || 'other';
-  return { [idKey]: idValue, [typeKey]: typeValue, ...nodeData };
+  const typeValue = reverseTypeMappings[selectedType.value];
+  return {[idKey]: idValue, [typeKey]: typeValue, ...nodeData};
 };
 
-// Handle Add Vaccination
-const handleAddVaccination = async () => {
-  if (selectedType.value === 'Vaccination') {
-    const vaccinationData = generateVaccinationData();
+const fetchJourneys = async () => {
+  const url = `https://n8n.tonii.at/webhook/history?id=${USER_ID}`;
 
-    const requestBody = {
-      user_id: '677ba8958eca95927318b059',
-      vaccine: vaccinationData,  // Include the vaccine data
-    };
+  try {
+    const response = await fetch(url);
+    if (response.ok) {
+      const data = await response.json();
 
-    const url = 'https://n8n.tonii.at/webhook/addVaccie';
+      const journeysData = data[0];
+      const activeJourneys = journeysData.active || [];
+      const inactiveJourneys = journeysData.inactive || [];
 
-    try {
-      const response = await fetch(url, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(requestBody),
-      });
+      // Combine and map journeys into a usable format
+      journeys.value = [
+        ...activeJourneys.map(journey => ({
+          title: journey.title,
+          id: journey.journey_id,
+        })),
+        ...inactiveJourneys.map(journey => ({
+          title: journey.title,
+          id: journey.journey_id,
+        })),
+      ];
 
-      if (response.ok) {
-        const data = await response.json();
-      } else {
-        console.error('Failed to add vaccination:', response.statusText);
+      // Set default selection to the first journey if available
+      if (journeys.value.length > 0) {
+        selectedJourney.value = journeys.value[0].id;
       }
-    } catch (error) {
-      console.error('Error adding vaccination:', error);
+    } else {
+      console.error('Failed to fetch journeys:', response.statusText);
     }
+  } catch (error) {
+    console.error('Error fetching journeys:', error);
   }
 };
 
-// Function to handle button click based on selected type
-const handleAddNodeClick = () => {
-  if (selectedType.value === 'Vaccination') {
-    handleAddVaccination(); // Handle Vaccination logic
-  } else {
-    callAddNode(); // Handle other node types
-  }
-};
 
-// The existing function for other node types
-const callAddNode = async () => {
-  const url = "https://n8n.tonii.at/webhook-test/addNode";
-  const user_id = '677ba8958eca95927318b059';
-  const journey_id = 1;
-  const nodeData = generateNodeData();
+const handleAddVaccination = async () => {
+
+  const vaccinationData = generateVaccinationData();
 
   const requestBody = {
-    user_id,
-    journey_id,
-    node: nodeData,
+    user_id: USER_ID,
+    vaccine: vaccinationData, // Include the vaccine data
   };
 
-  console.log("Node Data:", nodeData);
+  const url = 'https://n8n.tonii.at/webhook-test/addVaccie';
 
   try {
     const response = await fetch(url, {
@@ -163,7 +161,45 @@ const callAddNode = async () => {
 
     if (response.ok) {
       const data = await response.json();
-      console.log('Json response (should be old and updated user):', data[0]);
+      console.log('Vaccination added:', data);
+    } else {
+      console.error('Failed to add vaccination:', response.statusText);
+    }
+  } catch (error) {
+    console.error('Error adding vaccination:', error);
+  }
+};
+
+const handleAddNodeClick = async () => {
+  const journey_id = selectedJourney.value;
+  const user_id = USER_ID;
+
+  try {
+    if (selectedType.value === 'Vaccination') {
+      await handleAddVaccination();
+    }
+
+    const nodeData = generateNodeData();
+
+    const requestBody = {
+      user_id,
+      journey_id,
+      node: nodeData,
+    };
+
+    const url = 'https://n8n.tonii.at/webhook-test/addNode';
+
+    const response = await fetch(url, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(requestBody),
+    });
+
+    if (response.ok) {
+      const data = await response.json();
+      console.log('Node added:', data);
     } else {
       console.error('Failed to add node:', response.statusText);
     }
@@ -171,6 +207,10 @@ const callAddNode = async () => {
     console.error('Error adding node:', error);
   }
 };
+
+onMounted(() => {
+  fetchJourneys();
+});
 </script>
 
 <template>
@@ -189,6 +229,19 @@ const callAddNode = async () => {
           class="w-full mt-2 p-2 border rounded-md"
         >
           <option v-for="type in types" :key="type" :value="type">{{ type }}</option>
+        </select>
+      </div>
+
+      <div class="mb-4">
+        <Label for="journey">Journey</Label>
+        <select
+          v-model="selectedJourney"
+          id="journey"
+          class="w-full mt-2 p-2 border rounded-md"
+        >
+          <option v-for="journey in journeys" :key="journey.id" :value="journey.id">
+            {{ journey.title }}
+          </option>
         </select>
       </div>
 
