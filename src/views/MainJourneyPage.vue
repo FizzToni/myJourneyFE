@@ -10,11 +10,16 @@ import AddButton from '@/components/AddButton/AddButton.vue'
 const accountStore = useAccountStore();
 const journeys = ref([]); // Store journey data
 
+const { user } = storeToRefs(useAccountStore());
+const journeys = ref([]); // Store journey data
+
 const route = useRoute();
 const router = useRouter();
 const title = ref();
 const status = ref();
 const isVisible = ref(false);
+// Current date
+const currentDate = new Date(); // Today's date
 
 async function fetchJourneys() {
   const subJourneyId = route.query.journey_id || 0;
@@ -73,6 +78,33 @@ function closeModal() {
   isVisible.value = false;
 }
 
+
+// Function to determine if the "Today" line should be displayed before a node
+function shouldRenderTodayLine(node, index, length) {
+  const nodeDate = new Date(getDateProperty(node)); // Convert node date to Date object
+
+  // Check if the node date exists and is greater or equal to today
+  if (isNaN(nodeDate.getTime())) return false; // Skip invalid dates
+
+  const previousNode = journeys.value[index - 1];
+  const previousNodeDate = previousNode ? new Date(getDateProperty(previousNode)) : null;
+
+
+  return (
+    nodeDate >= currentDate && // Current node date is today or in the future
+    (!previousNodeDate || previousNodeDate < currentDate)// Previous node date is before today
+  );
+}
+
+function lastNode(node, index, length) {
+  const nodeDate = new Date(getDateProperty(node)); // Convert node date to Date object
+
+  // Check if the node date exists and is greater or equal to today
+  if (isNaN(nodeDate.getTime())) return false; // Skip invalid dates
+  return (
+    nodeDate < currentDate && index == length -1// Previous node date is before today
+  );
+}
 </script>
 
 <template>
@@ -80,6 +112,9 @@ function closeModal() {
     <section>
       <ul v-if="journeys.length > 0">
         <li v-for="(node, index) in journeys" :key="index">
+          <div v-if="shouldRenderTodayLine(node, index, journeys.length)" class="today-line">
+            <span class="line-text">Today {{ formatDate(currentDate) }}</span>
+          </div>
           <JourneyNode
             :node="node"
             :is-last="index === journeys.length - 1"
@@ -88,7 +123,8 @@ function closeModal() {
           />
         </li>
       </ul>
-      <p v-else class="min-h-[825px] text-center text-gray-500 font-semibold mt-8">No journeys available</p>
+
+      <p v-else class="min-h-[825px] text-center text-gray-500 font-semibold mt-8">No Nodes available</p>
     </section>
     <AddButton
       @node-added="fetchJourneys"
