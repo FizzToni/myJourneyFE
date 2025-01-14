@@ -1,7 +1,7 @@
 <template>
   <!-- Banner -->
   <AppWrapper title="Overview" status="" :on-refresh="fetchJourneys" >
-
+    <div class="m-2"/>
     <Card class="relative" @click="handleUserVaccineClick">
       <div class="absolute top-2 right-2 w-3 h-3 bg-red-500 rounded-full animate-ping "/>
       <CardHeader>

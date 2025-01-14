@@ -1,16 +1,14 @@
 <script setup lang="ts">
 import { useAccountStore } from '@/stores/account';
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, nextTick } from 'vue';
 import {useRoute, useRouter} from 'vue-router';
 import Modal from "@/components/Modal/Modal.vue";
 import JourneyNode from '@/components/JourneyNode.vue'
 import Wrapper from '@/components/AppWrapper.vue'
 import AddButton from '@/components/AddButton/AddButton.vue'
+import { Separator } from '@/components/ui/separator'
 
 const accountStore = useAccountStore();
-const journeys = ref([]); // Store journey data
-
-const { user } = storeToRefs(useAccountStore());
 const journeys = ref([]); // Store journey data
 
 const route = useRoute();
@@ -18,8 +16,10 @@ const router = useRouter();
 const title = ref();
 const status = ref();
 const isVisible = ref(false);
+
 // Current date
-const currentDate = new Date(); // Today's date
+const currentDate = new Date();
+const todayLineRef = ref<HTMLElement | null>(null);
 
 async function fetchJourneys() {
   const subJourneyId = route.query.journey_id || 0;
@@ -36,6 +36,12 @@ async function fetchJourneys() {
   if(status.value === undefined){
     status.value = '';
   }
+
+  await nextTick(() => {
+    if (todayLineRef.value) {
+      todayLineRef.value.scrollIntoView();
+    }
+  });
 
 }
 
@@ -64,16 +70,19 @@ function handleCustomEvent(newStatus: string) {
   });
 }
 onMounted(() => {
-  fetchJourneys();
+  fetchJourneys().then(() => {
+    const element = document.getElementById("today-line");
+    if (element) {
+      element.scrollIntoView({behavior: "smooth"});
+    }
+  });
 });
+
 function handleCreateJourneyEvent() {
   console.log("Create Journey Event received");
   isVisible.value = true; // Open the modal
 }
-function openModal() {
-  console.log("open modal");
-  isVisible.value = true;
-}
+
 function closeModal() {
   isVisible.value = false;
 }
@@ -96,24 +105,20 @@ function shouldRenderTodayLine(node, index, length) {
   );
 }
 
-function lastNode(node, index, length) {
-  const nodeDate = new Date(getDateProperty(node)); // Convert node date to Date object
-
-  // Check if the node date exists and is greater or equal to today
-  if (isNaN(nodeDate.getTime())) return false; // Skip invalid dates
-  return (
-    nodeDate < currentDate && index == length -1// Previous node date is before today
-  );
-}
 </script>
 
 <template>
   <Wrapper :title="title" :status="status" :on-refresh="fetchJourneys">
-    <section>
+    <section class="mt-4">
       <ul v-if="journeys.length > 0">
         <li v-for="(node, index) in journeys" :key="index">
-          <div v-if="shouldRenderTodayLine(node, index, journeys.length)" class="today-line">
-            <span class="line-text">Today {{ formatDate(currentDate) }}</span>
+          <div
+            v-if="shouldRenderTodayLine(node, index, journeys.length)"
+            class="m-4"
+            id="today-line"
+          >
+            <p class="text-center text-sm text-gray-500 font-thin">Heute</p>
+            <Separator :label="formatDate(currentDate)"/>
           </div>
           <JourneyNode
             :node="node"

@@ -13,6 +13,7 @@
     "format": "prettier --write src"
   },
   "dependencies": {
+    "@fontsource/manrope": "^5.1.1",
     "@radix-icons/vue": "^1.0.0",
     "@radix-ui/react-popover": "^1.1.4",
     "@shadcn/ui": "^0.0.4",

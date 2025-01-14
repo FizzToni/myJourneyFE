@@ -54,7 +54,7 @@ const getIconComponent = (type: string) => {
         />
       </span>
       <div class="flex-col">
-        <p class="font-semibold">
+        <p class="font-medium text-base">
           {{ props.node.name }}
         </p>
         <p
