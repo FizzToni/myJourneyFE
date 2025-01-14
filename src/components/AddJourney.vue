@@ -12,6 +12,7 @@ import {
 
 import { Input } from '@/components/ui/input/index.ts';
 import { Label } from '@/components/ui/label/index.ts';
+import {ScrollArea} from "@/components/ui/scroll-area";
 
 // Form state
 const name = ref('');
@@ -53,7 +54,7 @@ const callAddJourney = async () => {
 </script>
 
 <template>
-  <Card>
+  <ScrollArea class="h-[500px]">
     <CardHeader>
       <CardTitle>New Journey</CardTitle>
       <CardDescription>Create a new journey.</CardDescription>
@@ -84,7 +85,7 @@ const callAddJourney = async () => {
     <CardFooter>
       <Button @click="callAddJourney" class="w-full">Add Journey</Button>
     </CardFooter>
-  </Card>
+  </ScrollArea>
 </template>
 
 <style scoped>

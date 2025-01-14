@@ -7,6 +7,7 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card/index.ts';
+import {ScrollArea} from "@/components/ui/scroll-area";
 
 interface Vaccine {
   _id: string;
@@ -34,22 +35,23 @@ const fetchVaccines = async () => {
 // Typisierung für den Parameter `id` hinzufügen
 const handleVaccineClick = (id: string) => {
   console.log(id);
-  window.location.replace(`/vaccineDetail?id=${id}`);
+  // window.location.replace(`/vaccineDetail?id=${id}`);
 };
 
 onMounted(fetchVaccines);
 </script>
 
 <template>
+  <ScrollArea class="h-[500px]">
   <div class="p-4">
     <Card>
       <CardHeader>
-        <CardTitle>Available Vaccines</CardTitle>
-        <CardDescription>Click on a vaccine to see details.</CardDescription>
+        <CardTitle>Verfügbare Impfungen</CardTitle>
+        <CardDescription>Klicke auf eine Impfung für mehr Informationen. </CardDescription>
       </CardHeader>
       <CardContent>
         <div v-if="loading" class="text-center">
-          Loading vaccines...
+          Impfungen werden geladen...
         </div>
         <div v-else>
           <ul>
@@ -67,6 +69,7 @@ onMounted(fetchVaccines);
       </CardContent>
     </Card>
   </div>
+  </ScrollArea>
 </template>
 
 <style scoped>

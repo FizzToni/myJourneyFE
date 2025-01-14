@@ -51,7 +51,7 @@ function goToHistory() {
 
 <template>
   <Wrapper title="Account" status="" :on-refresh="fetchUser" :image="false">
-    <Card class="relative mt-10">
+    <Card class="relative mt-4">
       <CardHeader>
         <EditIcon class="absolute top-4 right-4 drop-shadow-md"/>
         <div class="flex w-max m-auto min-h-10">

@@ -9,6 +9,7 @@ import {
   LocationIcon
 } from '@/components/icons'
 import { defineProps } from 'vue';
+import { Drawer, DrawerTrigger, DrawerContent } from "@/components/ui/drawer";
 
 // Declare props using defineProps
 const props = defineProps<{
@@ -43,18 +44,18 @@ const getIconComponent = (type: string) => {
 </script>
 
 <template>
-  <div class="">
     <div class="flex gap-2 items-center">
       <!-- Icon circle with dynamic component rendering -->
-      <span class="flex justify-center items-center w-16 h-16 bg-white rounded-full drop-shadow-lg">
+      <span class="flex justify-center  min-w-4 items-center w-16 h-16 bg-white rounded-full drop-shadow-lg">
         <component
           :is="getIconComponent(props.node.type)"
           width="24"
           height="24"
         />
+
       </span>
       <div class="flex-col">
-        <p class="font-medium text-base">
+        <p class="font-medium text-base text-nowrap">
           {{ props.node.name }}
         </p>
         <p
@@ -76,6 +77,4 @@ const getIconComponent = (type: string) => {
 
     <!-- Separator -->
     <SeparatorIcon width="36" height="25" class="mx-3 my-2"/>
-  </div>
 </template>
-

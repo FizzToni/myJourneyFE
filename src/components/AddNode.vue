@@ -129,8 +129,8 @@ async function handleAddGenericNode(nodeData) {
 <template>
   <ScrollArea class="h-[500px]">
       <CardHeader>
-        <CardTitle>New Node</CardTitle>
-        <CardDescription>Add a new node to your journey.</CardDescription>
+        <CardTitle>Neuer Eintrag</CardTitle>
+        <CardDescription>Neuen Eintrag in die Journey hinzufügen.</CardDescription>
       </CardHeader>
 
       <CardContent>

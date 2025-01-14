@@ -1,33 +1,22 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue';
 import {useRoute, useRouter} from 'vue-router';
+import { useAccountStore } from "@/stores/account.ts";
 import Banner from "@/components/Banner/Banner.vue";
 import Navbar from "@/components/NavBar/Navbar.vue";
+import AppWrapper from "@/components/AppWrapper.vue";
 
 const route = useRoute();
 const router = useRouter();
 const active = ref([]);
 const inactive = ref([]);
 
+const accountStore = useAccountStore();
+
 async function fetchData() {
-  try {
-    const id = '678175573b069098d0d222a4';
-    const response = await fetch(`https://n8n.tonii.at/webhook/history?id=${id}`, {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    });
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
-    }
-    const jsonData = await response.json();
-    active.value = jsonData[0].active;
-    inactive.value = jsonData[0].inactive;
-  } catch (error) {
-    console.error('Error fetching data:', error);
-    alert('Failed to fetch data. Check console for details.');
-  }
+  const response = await accountStore.fetchHistory()
+  active.value = response[0].active;
+  inactive.value = response[0].inactive;
 }
 
 function navigateToMyJourney(journey_id, title, status) {
@@ -96,12 +85,10 @@ onMounted(() => {
 </script>
 
 <template>
-  <div class="main-container bg-gradient-to-br from-green-100 via-white to-blue-100">
-    <!-- Banner -->
-    <banner title="History" status="" :on-refresh="fetchData" />
+  <AppWrapper>
 
     <!-- Scrollable Sections -->
-    <div class="scrollable-sections">
+    <div class="scrollable-sections mt-2">
       <!-- Active Subsection -->
       <section class="subsection">
         <h2>Active</h2>
@@ -140,10 +127,7 @@ onMounted(() => {
         <p v-else>No inactive journeys available</p>
       </section>
     </div>
-
-    <!-- Navbar -->
-    <Navbar option=""/>
-  </div>
+  </AppWrapper>
 </template>
 
 <style scoped>

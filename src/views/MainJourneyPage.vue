@@ -7,6 +7,10 @@ import JourneyNode from '@/components/JourneyNode.vue'
 import Wrapper from '@/components/AppWrapper.vue'
 import AddButton from '@/components/AddButton/AddButton.vue'
 import { Separator } from '@/components/ui/separator'
+import {Drawer, DrawerTrigger, DrawerContent} from "@/components/ui/drawer";
+import VaccinesUser from "@/components/VaccinesUser.vue";
+import Vaccines from "@/components/Vaccines.vue";
+import NodeDetail from "@/components/NodeDetail.vue";
 
 const accountStore = useAccountStore();
 const journeys = ref([]); // Store journey data
@@ -108,6 +112,7 @@ function shouldRenderTodayLine(node, index, length) {
 </script>
 
 <template>
+  <Drawer>
   <Wrapper :title="title" :status="status" :on-refresh="fetchJourneys">
     <section class="mt-4">
       <ul v-if="journeys.length > 0">
@@ -120,12 +125,14 @@ function shouldRenderTodayLine(node, index, length) {
             <p class="text-center text-sm text-gray-500 font-thin">Heute</p>
             <Separator :label="formatDate(currentDate)"/>
           </div>
-          <JourneyNode
-            :node="node"
-            :is-last="index === journeys.length - 1"
-            :format-date="formatDate"
-            :get-date-property="getDateProperty"
-          />
+          <DrawerTrigger class="flex flex-col text-start">
+              <JourneyNode
+                :node="node"
+                :is-last="index === journeys.length - 1"
+                :format-date="formatDate"
+                :get-date-property="getDateProperty"
+              />
+          </DrawerTrigger>
         </li>
       </ul>
 
@@ -138,6 +145,10 @@ function shouldRenderTodayLine(node, index, length) {
     />
     <modal :on-close="closeModal" :is-visible="isVisible" />
   </Wrapper>
+    <DrawerContent>
+      <NodeDetail/>
+    </DrawerContent>
+  </Drawer>
 </template>
 
 

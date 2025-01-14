@@ -12,6 +12,7 @@ import {
 
 import { Input } from '@/components/ui/input/index.ts';
 import { Label } from '@/components/ui/label/index.ts';
+import {ScrollArea} from "@/components/ui/scroll-area";
 
 const responseData = ref(null);
 const isEditMode = ref(false);
@@ -186,6 +187,7 @@ onMounted(fetchNodeDetails);
 </script>
 
 <template>
+  <ScrollArea class="h-[500px]">
   <Card>
     <CardHeader>
       <CardTitle v-if="!isEditMode">Node Details</CardTitle>
@@ -261,6 +263,7 @@ onMounted(fetchNodeDetails);
       </div>
     </CardFooter>
   </Card>
+  </ScrollArea>
 </template>
 
 <style scoped>

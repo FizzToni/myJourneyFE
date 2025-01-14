@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue';
+import { useAccountStore } from "@/stores/account.ts";
 import {
   Card,
   CardContent,
@@ -7,6 +8,7 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card/index.ts';
+import {ScrollArea} from "@/components/ui/scroll-area";
 
 // Definiere das Interface für den Impfstoff
 interface Vaccine {
@@ -20,22 +22,12 @@ interface Vaccine {
 
 const vaccines = ref<Vaccine[]>([]);
 const loading = ref(true);
+const accountStore = useAccountStore();
 
 const fetchVaccines = async () => {
-  try {
-    const response = await fetch(
-      'https://n8n.tonii.at/webhook/getDataForOverview?id=677ba8958eca95927318b059'
-    );
-    if (!response.ok) {
-      throw new Error(`Error fetching vaccines: ${response.status}`);
-    }
-    const data = await response.json();
-    vaccines.value = data[0]?.vaccines || []; // Nur das `vaccines`-Array extrahieren
-  } catch (error) {
-    console.error('Error fetching vaccines:', error);
-  } finally {
-    loading.value = false;
-  }
+  const data = await accountStore.fetchOverview();
+  vaccines.value = data[0]?.vaccines || [];
+  loading.value = false
 };
 
 // Typisierung für den Parameter `id` hinzufügen
@@ -48,15 +40,16 @@ onMounted(fetchVaccines);
 </script>
 
 <template>
+  <ScrollArea class="h-[500px]">
   <div class="p-4">
     <Card>
       <CardHeader>
-        <CardTitle>Available Vaccines</CardTitle>
-        <CardDescription>Click on a vaccine to see details.</CardDescription>
+        <CardTitle>Impfpass</CardTitle>
+        <CardDescription>Für mehr Details anklicken</CardDescription>
       </CardHeader>
       <CardContent>
         <div v-if="loading" class="text-center">
-          Loading vaccines...
+          Impfungen werden geladen...
         </div>
         <div v-else>
           <ul>
@@ -64,19 +57,19 @@ onMounted(fetchVaccines);
               v-for="vaccine in vaccines"
               :key="vaccine.id"
               class="p-4 border-b cursor-pointer hover:bg-gray-100"
-              @click="handleVaccineClick(vaccine.id)"
             >
               <strong>{{ vaccine.name }}</strong>
               <p>{{ vaccine.details || 'No description available' }}</p>
               <p v-if="vaccine.date">Date: {{ vaccine.date }}</p>
-              <p v-if="vaccine.location">Location: {{ vaccine.location }}</p>
-              <p v-if="vaccine.dose">Dose: {{ vaccine.dose }}</p>
+              <!--    <p v-if="vaccine.location">Location: {{ vaccine.location }}</p>
+              <p v-if="vaccine.dose">Dose: {{ vaccine.dose }}</p>-->
             </li>
           </ul>
         </div>
       </CardContent>
     </Card>
   </div>
+  </ScrollArea>
 </template>
 
 <style scoped>

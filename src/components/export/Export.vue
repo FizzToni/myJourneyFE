@@ -30,38 +30,14 @@ const qrCodeDataUrl = ref('')
 const showPopup = ref(false)
 
 async function getUserJourney(journeyId: string) {
-  console.log(journeyId);
-  try {
-    const id = '678175573b069098d0d222a4'
-    //user.value.account_id
-    const response = await fetch(`https://n8n.tonii.at/webhook/myjourney?id=${id}&journey_id=${journeyId}`, {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    });
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
-    }
-    const data = await response.json();
-    await generateQRCode(data[0].journey);
-  } catch (error) {
-    console.error('Error fetching journeys:', error);
-    alert('Failed to fetch journeys. Check console for details.');
-    journeys.value = [];
-  }
+  const response = await accountStore.fetchJourney(journeyId);
+  await generateQRCode(response[0].journey);
 }
 
 // Generate QR code with user data
 const generateQRCode =
   async function (journey: any){
   try {
-    const userId = '678175573b069098d0d222a4' // Get user ID from the store
-
-    if (!userId) {
-      console.warn('User ID not found.')
-      return
-    }
 
     // Create a JSON object with user data
     const jsonData = {
@@ -72,7 +48,9 @@ const generateQRCode =
     }
 
     const jsonString = JSON.stringify(jsonData)
-    qrCodeDataUrl.value = await QRCode.toDataURL(jsonString)
+    console.log(jsonString);
+
+    //qrCodeDataUrl.value = await QRCode.toString(jsonString)
     showPopup.value = true
   } catch (error) {
     console.error('Error generating QR code:', error)

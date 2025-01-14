@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JSON Viewer</title>
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            margin: 20px;
+            color: #333;
+            background-color: #f8f9fa;
+        }
+        .container {
+            max-width: 800px;
+            margin: auto;
+            background: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            color: #007bff;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .status {
+            text-align: center;
+            font-size: 1.2em;
+            font-weight: bold;
+            color: #dc3545;
+        }
+        .node {
+            margin-bottom: 20px;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            background: #f9f9f9;
+        }
+        .node h2 {
+            font-size: 1.4em;
+            color: #343a40;
+        }
+        .node p {
+            margin: 5px 0;
+        }
+        .important {
+            font-weight: bold;
+            color: #495057;
+        }
+        .footer {
+            text-align: center;
+            margin-top: 30px;
+            font-size: 0.9em;
+            color: #6c757d;
+        }
+        @media print {
+            body {
+                background: #fff;
+                margin: 0;
+            }
+            .container {
+                box-shadow: none;
+                border: none;
+            }
+        }
+    </style>
+</head>
+<body>
+<div id="app" class="container">
+    <h1>JSON Viewer</h1>
+    <div class="status">Status: {{ data.status }}</div>
+    <div class="nodes">
+        <div v-for="node in data.nodes" :key="node._id" class="node">
+            <h2>{{ node.name }} ({{ node.date }})</h2>
+            <p><span class="important">Reason:</span> {{ node.reason }}</p>
+            <p><span class="important">Location:</span> {{ node.location }}</p>
+            <p><span class="important">Department:</span> {{ node.department }}</p>
+            <p><span class="important">Diagnosis:</span> {{ node.diagnosis }}</p>
+            <p><span class="important">Treatment:</span> {{ node.treatment }}</p>
+            <p><span class="important">Doctor's Notes:</span> {{ node.notes_doctor }}</p>
+            <p><span class="important">Self Notes:</span> {{ node.notes_self }}</p>
+        </div>
+    </div>
+    <div class="footer">Generated on {{ new Date(data.timestamp).toLocaleDateString() }}</div>
+</div>
+
+<script>
+    const app = Vue.createApp({
+        data() {
+            return {
+                data: {
+                    "title": "Rechter Fuß gebrochen",
+                    "status": "inactive",
+                    "nodes": [
+                        {
+                            "_id": 1,
+                            "name": "Röntgen",
+                            "reason": "Ich bin beim Fußballspielen nach einem Kopfball falsch aufgekommen",
+                            "stationary": false,
+                            "location": "Allgemeines Krankenhaus (AKH) der Stadt Wien",
+                            "department": "Notaufnahme",
+                            "diagnosis": "Es wurde eine Mittelfußfraktur festgestellt",
+                            "treatment": "Röntgenaufnahme, Schiene angelegt, Termin für Nachsorge vereinbart",
+                            "notes_doctor": "Patient zeigt keine weiteren Verletzungen außer dem Knochenbruch. Schiene wurde korrekt angebracht, weitere Nachsorge empfohlen.",
+                            "notes_self": "Der Bruch schmerzt, aber ich bin erleichtert, dass die Versorgung so schnell erfolgt ist.",
+                            "type": "med_institute",
+                            "date": "2020-01-10"
+                        }
+                    ],
+                    "timestamp": "2025-01-14T14:42:18.339Z"
+                }
+            };
+        }
+    });
+
+    app.mount('#app');
+</script>
+</body>
+</html>

@@ -200,6 +200,8 @@ export const useAccountStore = defineStore('account', {
       }
     },
 
+
+
     async addNodeToJourney(newNode: any) {
       console.log('Adding node:', newNode);
       const url = "https://n8n.tonii.at/webhook/addNode";
@@ -235,8 +237,98 @@ export const useAccountStore = defineStore('account', {
       }
     },
 
+    async globalSearch(query: string) {
+      try {
+        const response = await fetch(`https://n8n.tonii.at/webhook/globalSearch?id=${this.user.account_id}&name=${query}`);
 
+        if (!response.ok) {
+          throw new Error('Error fetching search results');
+        }
 
+        const data = await response.json();
+        return data;
+
+      } catch (error) {
+        console.error('Error fetching search results:', error);
+      }
+    },
+
+    async fetchHistory() {
+      try {
+        const response = await fetch(`https://n8n.tonii.at/webhook/history?id=${this.user.account_id}`, {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        });
+        if (!response.ok) {
+          throw new Error('Error fetching history.');
+        }
+
+        const data = await response.json();
+        return data
+      } catch (error) {
+        console.error('Error fetching data:', error);
+        alert('Failed to fetch data. Check console for details.');
+      }
+    },
+
+    async fetchOverview() {
+      try {
+        const response = await fetch(`https://n8n.tonii.at/webhook/getDataForOverview?id=${this.user.account_id}`, {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        });
+
+        const data = await response.json();
+        return data;
+
+      } catch (error) {
+        console.error('Error fetching overview:', error);
+        alert('Failed to fetch overview. Check console for details.');
+      }
+    },
+
+    async fetchNodeDetails() {
+      const id = '677ba8958eca95927318b059';
+      const journey_id = 1;
+      const node_id = 1;
+
+      try {
+        const baseUrl = 'https://n8n.tonii.at/webhook/node';
+        const response = await fetch(`${baseUrl}?id=${id}&journey_id=${journey_id}&node_id=${node_id}`);
+        if (!response.ok) {
+          throw new Error(`HTTP error fetching n8n: ${response.status}`);
+        }
+
+        const data = await response.json();
+        const filteredData = Object.fromEntries(
+          Object.entries(data[0]).filter(([key]) => key !== '_id')
+        );
+
+        // Check for mapped types first
+        const nodeTypeKey = data[0].type;
+        selectedType.value = typeMappings[nodeTypeKey] ||
+          Object.keys(fieldTemplates).find((type) =>
+            fieldTemplates[type].every((template) =>
+              Object.keys(filteredData).includes(
+                template.label.toLowerCase().replace(/ /g, '_')
+              )
+            )
+          ) || 'Other';
+
+        responseData.value = [filteredData];
+        originalFields.value = Object.entries(filteredData).map(([key, value]) => ({
+          label: key.replace(/_/g, ' ').replace(/\b\w/g, (char) => char.toUpperCase()),
+          value,
+        }));
+        editedFields.value = JSON.parse(JSON.stringify(originalFields.value));
+      } catch (error) {
+        console.error('Error fetching node:', error);
+      }
+    }
 
 
   },

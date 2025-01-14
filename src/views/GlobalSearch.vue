@@ -9,6 +9,9 @@ import {
   CommandSeparator,
 } from '@/components/ui/command';
 import { ref, watch } from 'vue';
+import { useAccountStore } from '@/stores/account';
+
+const accountStore = useAccountStore();
 
 interface Vaccine {
   _id: string;
@@ -43,25 +46,16 @@ const searchResults = ref<{ vaccines: Vaccine[]; journeys: Journey[]; nodes: Nod
 const searchQuery = ref('');
 
 const fetchSearchResults = async (query: string) => {
-  try {
-    const response = await fetch(`https://n8n.tonii.at/webhook/globalSearch?id=678175573b069098d0d222a4&name=${query}`);
-
-    if (response.ok) {
-      const data = await response.json();
-      searchResults.value = {
-        //delete .slice(0,5) for more than 5 hits per search
-        vaccines: data.flatMap((item: { vaccines?: Vaccine[] }) => item.vaccines || []).slice(0, 5),
-        journeys: data.flatMap((item: { journeys?: Journey[] }) => item.journeys || []).slice(0, 5),
-        nodes: data.flatMap((item: { nodes?: Node[] }) => item.nodes || []).filter((node: Node) =>
-          node.name.toLowerCase().includes(query.toLowerCase())
-        ).slice(0, 5),
-      };
-    } else {
-      throw new Error('Error fetching search results');
-    }
-  } catch (error) {
-    console.error('Error fetching search results:', error);
-  }
+  await accountStore.globalSearch(query).then((response) => {
+    searchResults.value = {
+      //delete .slice(0,5) for more than 5 hits per search
+      vaccines: response.flatMap((item: { vaccines?: Vaccine[] }) => item.vaccines || []).slice(0, 5),
+      journeys: response.flatMap((item: { journeys?: Journey[] }) => item.journeys || []).slice(0, 5),
+      nodes: response.flatMap((item: { nodes?: Node[] }) => item.nodes || []).filter((node: Node) =>
+        node.name.toLowerCase().includes(query.toLowerCase())
+      ).slice(0, 5),
+    };
+  });
 };
 
 watch(searchQuery, (newQuery) => {
