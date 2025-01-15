@@ -21,8 +21,8 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue';
-import { useRouter } from 'vue-router';
+import { ref, watch } from 'vue';
+import { useRouter, useRoute } from 'vue-router';
 
 const navItems = [
   { label: 'Journey', icon: 'timeline', route: '/main' },
@@ -32,11 +32,21 @@ const navItems = [
 
 const activeItem = ref(navItems[0].label);
 const router = useRouter();
+const route = useRoute();
 
 const navigateTo = (route: string, label: string) => {
-  activeItem.value = label;
   router.push(route);
 };
+
+watch(route, (newRoute) => {
+  const matchingItem = navItems.find(item => item.route === newRoute.path);
+  if (matchingItem) {
+    activeItem.value = matchingItem.label;
+  }
+  if (newRoute.path === '/history') {
+    activeItem.value = 'Account';
+  }
+}, { immediate: true });
 </script>
 
 <style scoped>

@@ -13,7 +13,8 @@ import Vaccines from "@/components/Vaccines.vue";
 import NodeDetail from "@/components/NodeDetail.vue";
 
 const accountStore = useAccountStore();
-const journeys = ref([]); // Store journey data
+const journeys = ref([]);
+const selectedNode = ref(null);
 
 const route = useRoute();
 const router = useRouter();
@@ -109,6 +110,10 @@ function shouldRenderTodayLine(node, index, length) {
   );
 }
 
+function handleNodeClick(node) {
+  selectedNode.value = node;
+}
+
 </script>
 
 <template>
@@ -119,13 +124,16 @@ function shouldRenderTodayLine(node, index, length) {
         <li v-for="(node, index) in journeys" :key="index">
           <div
             v-if="shouldRenderTodayLine(node, index, journeys.length)"
-            class="m-4"
+            class="mb-6"
             id="today-line"
           >
             <p class="text-center text-sm text-gray-500 font-thin">Heute</p>
             <Separator :label="formatDate(currentDate)"/>
           </div>
-          <DrawerTrigger class="flex flex-col text-start">
+          <DrawerTrigger
+            class="flex flex-col text-start"
+            @click="handleNodeClick(node)"
+          >
               <JourneyNode
                 :node="node"
                 :is-last="index === journeys.length - 1"
@@ -136,7 +144,7 @@ function shouldRenderTodayLine(node, index, length) {
         </li>
       </ul>
 
-      <p v-else class="min-h-[825px] text-center text-gray-500 font-semibold mt-8">No Nodes available</p>
+      <p v-else class="min-h-[825px] text-center text-gray-500 font-semibold mt-8">Keine Einträge verfügbar</p>
     </section>
     <AddButton
       @node-added="fetchJourneys"
@@ -146,7 +154,7 @@ function shouldRenderTodayLine(node, index, length) {
     <modal :on-close="closeModal" :is-visible="isVisible" />
   </Wrapper>
     <DrawerContent>
-      <NodeDetail/>
+      <NodeDetail :node="selectedNode"/>
     </DrawerContent>
   </Drawer>
 </template>

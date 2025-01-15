@@ -13,7 +13,7 @@
       <slot></slot>
     </div>
 
-    <Navbar v-if="navbar" />
+    <Navbar v-if="navbar"/>
   </div>
 </template>
 

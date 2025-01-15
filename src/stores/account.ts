@@ -291,6 +291,29 @@ export const useAccountStore = defineStore('account', {
       }
     },
 
+    async toggleStatus(journeyId, newStatus) {
+      try {
+        const response = await fetch('http://n8n.tonii.at/webhook/status', {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            id: this.user.account_id,
+            journey_id: journeyId,
+            status: newStatus
+          }),
+        });
+
+        if (!response.ok) {
+          throw new Error('Failed to update status');
+        }
+        return true;
+
+      } catch (error) {
+        console.error('Error updating status:', error);
+        return false;
+      }
+    },
+
     async fetchNodeDetails() {
       const id = '677ba8958eca95927318b059';
       const journey_id = 1;

@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import { ref, computed, onMounted } from 'vue';
+import { ref, computed, onMounted, watch } from 'vue';
+import { useAccountStore } from '@/stores/account.ts'
 import { Button } from '@/components/ui/button/index.ts';
 import {
   Card,
@@ -9,16 +10,23 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card/index.ts';
-
 import { Input } from '@/components/ui/input/index.ts';
 import { Label } from '@/components/ui/label/index.ts';
-import {ScrollArea} from "@/components/ui/scroll-area";
+import { ScrollArea } from "@/components/ui/scroll-area";
+
+const props = defineProps({
+  node: {
+    type: Object,
+    default: null
+  }
+});
 
 const responseData = ref(null);
 const isEditMode = ref(false);
 const editedFields = ref([]);
 const originalFields = ref([]);
 const selectedType = ref('');
+const accountStore = useAccountStore();
 
 // Node types for dropdown
 const types = ref(['Vaccination', 'Med. Institution', 'E-Health', 'Other']);
@@ -94,9 +102,13 @@ const typeMappings = {
 };
 
 const fetchNodeDetails = async () => {
-  const id = '677ba8958eca95927318b059';
-  const journey_id = 1;
-  const node_id = 1;
+  if (!props.node) return;
+  const response = await accountStore.fetchNodeDetails(props.node._id);
+
+
+  const id = '67856c9e30228f9023123fbd';
+  const journey_id = 0;
+  const node_id = props.node._id;
 
   try {
     const baseUrl = 'https://n8n.tonii.at/webhook/node';
@@ -132,7 +144,6 @@ const fetchNodeDetails = async () => {
   }
 };
 
-
 const generateEditedNode = () => {
   const changes = {};
   for (const field of editedFields.value) {
@@ -148,7 +159,7 @@ const callEditNode = async () => {
   const url = "https://n8n.tonii.at/webhook-test/editNode";
   const user_id = '677ba8958eca95927318b059';
   const journey_id = 1;
-  const node_id = 1;
+  const node_id = props.node.id;
   const edited_data = generateEditedNode();
 
   const requestBody = {
@@ -183,86 +194,86 @@ const callEditNode = async () => {
   }
 };
 
-onMounted(fetchNodeDetails);
+watch(() => props.node, fetchNodeDetails(), { immediate: true });
 </script>
 
 <template>
   <ScrollArea class="h-[500px]">
-  <Card>
-    <CardHeader>
-      <CardTitle v-if="!isEditMode">Node Details</CardTitle>
-      <CardTitle v-else>Edit Node</CardTitle>
-      <CardDescription v-if="!isEditMode">
-        View the details of the node below.
-      </CardDescription>
-      <CardDescription v-else>
-        Modify the details of your node below.
-      </CardDescription>
-    </CardHeader>
+    <Card>
+      <CardHeader>
+        <CardTitle v-if="!isEditMode">Node Details</CardTitle>
+        <CardTitle v-else>Edit Node</CardTitle>
+        <CardDescription v-if="!isEditMode">
+          View the details of the node below.
+        </CardDescription>
+        <CardDescription v-else>
+          Modify the details of your node below.
+        </CardDescription>
+      </CardHeader>
 
-    <CardContent>
-      <div v-if="responseData">
-        <!-- Normal View -->
-        <div v-if="!isEditMode">
-          <ul>
-            <li v-for="field in originalFields" :key="field.label">
-              <strong>{{ field.label }}:</strong> {{ field.value }}
-            </li>
-          </ul>
+      <CardContent>
+        <div v-if="responseData">
+          <!-- Normal View -->
+          <div v-if="!isEditMode">
+            <ul>
+              <li v-for="field in originalFields" :key="field.label">
+                <strong>{{ field.label }}:</strong> {{ field.value }}
+              </li>
+            </ul>
+          </div>
+
+          <!-- Edit View -->
+          <div v-else>
+            <!-- Type Dropdown -->
+            <div class="mb-4">
+              <Label for="type">Type</Label>
+              <select
+                v-model="selectedType"
+                id="type"
+                class="w-full mt-2 p-2 border rounded-md"
+              >
+                <option v-for="type in types" :key="type" :value="type">{{ type }}</option>
+              </select>
+            </div>
+
+            <!-- Fields for the selected type -->
+            <div v-for="(field, index) in fields" :key="index" class="mb-4">
+              <Label :for="'field' + index">{{ field.label }}</Label>
+              <Input
+                v-model="field.value"
+                :id="'field' + index"
+                :type="typeof field.value === 'boolean' ? 'checkbox' : 'text'"
+                class="w-full mt-2 p-2 border rounded-md"
+                :checked="field.value === true"
+                @change="field.value = $event.target.type === 'checkbox' ? $event.target.checked : $event.target.value"
+              />
+            </div>
+          </div>
         </div>
-
-        <!-- Edit View -->
         <div v-else>
-          <!-- Type Dropdown -->
-          <div class="mb-4">
-            <Label for="type">Type</Label>
-            <select
-              v-model="selectedType"
-              id="type"
-              class="w-full mt-2 p-2 border rounded-md"
-            >
-              <option v-for="type in types" :key="type" :value="type">{{ type }}</option>
-            </select>
-          </div>
-
-          <!-- Fields for the selected type -->
-          <div v-for="(field, index) in fields" :key="index" class="mb-4">
-            <Label :for="'field' + index">{{ field.label }}</Label>
-            <Input
-              v-model="field.value"
-              :id="'field' + index"
-              :type="typeof field.value === 'boolean' ? 'checkbox' : 'text'"
-              class="w-full mt-2 p-2 border rounded-md"
-              :checked="field.value === true"
-              @change="field.value = $event.target.type === 'checkbox' ? $event.target.checked : $event.target.value"
-            />
-          </div>
+          <p>Loading node details...</p>
         </div>
-      </div>
-      <div v-else>
-        <p>Loading node details...</p>
-      </div>
-    </CardContent>
+      </CardContent>
 
-    <CardFooter>
-      <div v-if="responseData">
-        <Button
-          v-if="!isEditMode"
-          @click="isEditMode = true"
-          class="w-full mt-2"
-        >
-          Edit Node
-        </Button>
-        <Button
-          v-else
-          @click="callEditNode"
-          class="w-full mt-2"
-        >
-          Save Changes
-        </Button>
-      </div>
-    </CardFooter>
-  </Card>
+      <CardFooter>
+        <div v-if="responseData">
+          <Button
+            v-if="!isEditMode"
+            @click="isEditMode = true"
+            class="w-full mt-2"
+          >
+            Edit Node
+          </Button>
+          <Button
+            v-else
+            @click="callEditNode"
+            class="w-full mt-2"
+          >
+            Save Changes
+          </Button>
+        </div>
+      </CardFooter>
+    </Card>
   </ScrollArea>
 </template>
 

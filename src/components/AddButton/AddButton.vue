@@ -4,6 +4,7 @@ import { useRoute,useRouter } from "vue-router";
 import { Drawer, DrawerContent, DrawerTrigger } from '@/components/ui/drawer'
 import AddNode from '@/components/AddNode.vue'
 import Export from "@/components/export/Export.vue";
+import { useAccountStore } from '@/stores/account.ts'
 
 // Toggle state for showing the popup options
 const showOptions = ref(false);
@@ -11,9 +12,10 @@ const showOptions = ref(false);
 // Access the current route using Vue Router
 const route = useRoute();
 const router = useRouter();
+const accountStore = useAccountStore();
 
-const status =route.query.status; // Default status
-const id = "678175573b069098d0d222a4";
+const status = ref(route.query.status); // Default status
+// const id = "678175573b069098d0d222a4";
 const journey_id = route.query.journey_id;
 
 const emit = defineEmits<{
@@ -34,37 +36,15 @@ function toggleOptions() {
 
 // Function to handle option clicks
 
-function handleChangeStatus(option: string, status: string) {
-  console.log("Clicked option:", option);
-  triggerChangeStatusEvent(status === "active" ? "inactive" : "active");//data[0].status
+async function handleChangeStatus(option: string) {
+  const newStatus = status.value === "active" ? "inactive" : "active";
+  triggerChangeStatusEvent(newStatus);//data[0].status
 
-  const id = "678175573b069098d0d222a4"; // Example ID
   const journey_id = route.query.journey_id; // Extract journey_id from the route
 
-  fetch("https://n8n.tonii.at/webhook/status", {
-    method: "PUT",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({
-      id: id,
-      journey_id: journey_id,
-      status: status === "active" ? "inactive" : "active",
-    }),
-  })
-    .then((response) => {
-      if (!response.ok) {
-        throw new Error("Network response was not ok");
-      }
-      return response.json();
-    })
-    .then((data) => {
-      console.log("PUT request successful:", data);
-    })
-    .catch((error) => {
-      console.error("Error in PUT request:", error);
-    });
+  await accountStore.toggleStatus(journey_id, newStatus);
 
+  status.value = newStatus;
   showOptions.value = false; // Close options after clicking
 }
 
@@ -108,14 +88,14 @@ const isMainPage = computed(() => route.fullPath.endsWith("/main"));
       <!-- Popup options -->
       <div v-if="showOptions" class="popup-options">
         <!-- Change active/inactive -->
-        <button v-if="!isMainPage" class="option" @click="handleChangeStatus('Change Status', <string>status)">Change Status</button>
+        <button v-if="!isMainPage" class="option" @click="handleChangeStatus('Change Status')">Change Status</button>
         <!-- Add Node -->
         <DrawerTrigger>
           <button class="option" @click="handleAddNode('Add Node')">Add Node</button>
         </DrawerTrigger>
         <!-- Add Sub-Journey -->
         <button class="option" @click="handleCreateJourney('Create Sub-Journey')">Create Sub-Journey</button>
-        <export class="option" :journey-id=journey_id />
+        <export v-if="!isMainPage" class="option" :journey-id=journey_id />
       </div>
     </div>
 
