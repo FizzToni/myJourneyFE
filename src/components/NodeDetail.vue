@@ -1,18 +1,11 @@
 <script setup lang="ts">
-import { ref, computed, onMounted, watch } from 'vue';
-import { useAccountStore } from '@/stores/account.ts'
-import { Button } from '@/components/ui/button/index.ts';
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from '@/components/ui/card/index.ts';
-import { Input } from '@/components/ui/input/index.ts';
-import { Label } from '@/components/ui/label/index.ts';
-import { ScrollArea } from "@/components/ui/scroll-area";
+import { computed, ref, watch } from 'vue'
+import { Button } from '@/components/ui/button/index.ts'
+import { CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card/index.ts'
+import { Input } from '@/components/ui/input/index.ts'
+import { Label } from '@/components/ui/label/index.ts'
+import { ScrollArea } from '@/components/ui/scroll-area'
+import { Checkbox } from '@/components/ui/checkbox'
 
 const props = defineProps({
   node: {
@@ -21,19 +14,62 @@ const props = defineProps({
   }
 });
 
-const responseData = ref(null);
 const isEditMode = ref(false);
 const editedFields = ref([]);
 const originalFields = ref([]);
 const selectedType = ref('');
-const accountStore = useAccountStore();
 
 // Node types for dropdown
-const types = ref(['Vaccination', 'Med. Institution', 'E-Health', 'Other']);
+const types = ref([
+  { key: 'medication', label: 'Medication' },
+  { key: 'med_institution', label: 'Med. Institution' },
+  { key: 'tooth', label: 'Tooth' },
+  { key: 'vaccine', label: 'Vaccine' },
+  { key: 'physio', label: 'Physio' },
+]);
 
 // Default field sets based on the node type
 const fieldTemplates = {
-  'Vaccination': [
+  'medication': [
+    { label: 'Name', value: '' },
+    { label: 'Reason', value: '' },
+    { label: 'Stationary', value: false },
+    { label: 'Admission Date', value: '' },
+    { label: 'Release Date', value: '' },
+    { label: 'Location', value: '' },
+    { label: 'Department', value: '' },
+    { label: 'Diagnosis', value: '' },
+    { label: 'Treatment', value: '' },
+    { label: 'Notes Doctor', value: '' },
+    { label: 'Notes Self', value: '' },
+  ],
+  'med_institution': [
+    { label: 'Name', value: '' },
+    { label: 'Reason', value: '' },
+    { label: 'Stationary', value: false },
+    { label: 'Admission Date', value: '' },
+    { label: 'Release Date', value: '' },
+    { label: 'Location', value: '' },
+    { label: 'Department', value: '' },
+    { label: 'Diagnosis', value: '' },
+    { label: 'Treatment', value: '' },
+    { label: 'Notes Doctor', value: '' },
+    { label: 'Notes Self', value: '' },
+  ],
+  'tooth': [
+    { label: 'Name', value: '' },
+    { label: 'Reason', value: '' },
+    { label: 'Stationary', value: false },
+    { label: 'Admission Date', value: '' },
+    { label: 'Release Date', value: '' },
+    { label: 'Location', value: '' },
+    { label: 'Department', value: '' },
+    { label: 'Diagnosis', value: '' },
+    { label: 'Treatment', value: '' },
+    { label: 'Notes Doctor', value: '' },
+    { label: 'Notes Self', value: '' },
+  ],
+  'vaccine': [
     { label: 'Name', value: '' },
     { label: 'Reason', value: '' },
     { label: 'Stationary', value: false },
@@ -50,7 +86,7 @@ const fieldTemplates = {
     { label: 'Next Dose From', value: '' },
     { label: 'Next Dose By', value: '' },
   ],
-  'Med. Institution': [
+  'physio': [
     { label: 'Name', value: '' },
     { label: 'Reason', value: '' },
     { label: 'Stationary', value: false },
@@ -60,26 +96,6 @@ const fieldTemplates = {
     { label: 'Department', value: '' },
     { label: 'Diagnosis', value: '' },
     { label: 'Treatment', value: '' },
-    { label: 'Notes Doctor', value: '' },
-    { label: 'Notes Self', value: '' },
-  ],
-  'E-Health': [
-    { label: 'Name', value: '' },
-    { label: 'Reason', value: '' },
-    { label: 'Stationary', value: false },
-    { label: 'Admission Date', value: '' },
-    { label: 'Release Date', value: '' },
-    { label: 'Location', value: '' },
-    { label: 'Department', value: '' },
-    { label: 'Diagnosis', value: '' },
-    { label: 'Treatment', value: '' },
-    { label: 'Notes Doctor', value: '' },
-    { label: 'Notes Self', value: '' },
-  ],
-  'Other': [
-    { label: 'Name', value: '' },
-    { label: 'Admission Date', value: '' },
-    { label: 'Release Date', value: '' },
     { label: 'Notes Doctor', value: '' },
     { label: 'Notes Self', value: '' },
   ],
@@ -98,50 +114,22 @@ const fields = computed(() => {
 const typeMappings = {
   'med_institution': 'Med. Institution',
   'e_health': 'E-Health',
-  'vaccination': 'Vaccination'
+  'vaccination': 'Vaccination',
+  'medication': 'Medication',
+  'tooth': 'Tooth',
+  'physio': 'Physio'
 };
 
-const fetchNodeDetails = async () => {
+const initializeFields = () => {
   if (!props.node) return;
-  const response = await accountStore.fetchNodeDetails(props.node._id);
 
+  selectedType.value = props.node.type;
 
-  const id = '67856c9e30228f9023123fbd';
-  const journey_id = 0;
-  const node_id = props.node._id;
-
-  try {
-    const baseUrl = 'https://n8n.tonii.at/webhook/node';
-    const response = await fetch(`${baseUrl}?id=${id}&journey_id=${journey_id}&node_id=${node_id}`);
-    if (!response.ok) {
-      throw new Error(`HTTP error fetching n8n: ${response.status}`);
-    }
-
-    const data = await response.json();
-    const filteredData = Object.fromEntries(
-      Object.entries(data[0]).filter(([key]) => key !== '_id')
-    );
-
-    // Check for mapped types first
-    const nodeTypeKey = data[0].type;
-    selectedType.value = typeMappings[nodeTypeKey] ||
-      Object.keys(fieldTemplates).find((type) =>
-        fieldTemplates[type].every((template) =>
-          Object.keys(filteredData).includes(
-            template.label.toLowerCase().replace(/ /g, '_')
-          )
-        )
-      ) || 'Other';
-
-    responseData.value = [filteredData];
-    originalFields.value = Object.entries(filteredData).map(([key, value]) => ({
-      label: key.replace(/_/g, ' ').replace(/\b\w/g, (char) => char.toUpperCase()),
-      value,
-    }));
-    editedFields.value = JSON.parse(JSON.stringify(originalFields.value));
-  } catch (error) {
-    console.error('Error fetching node:', error);
-  }
+  originalFields.value = Object.entries(props.node).map(([key, value]) => ({
+    label: key.replace(/_/g, ' ').replace(/\b\w/g, (char) => char.toUpperCase()),
+    value,
+  }));
+  editedFields.value = JSON.parse(JSON.stringify(originalFields.value));
 };
 
 const generateEditedNode = () => {
@@ -183,9 +171,8 @@ const callEditNode = async () => {
     if (response.ok) {
       const data = await response.json();
       console.log('Response:', data[0]);
-      // Optional: Reset edit mode or refresh data after saving
       isEditMode.value = false;
-      fetchNodeDetails();
+      initializeFields();
     } else {
       console.error('Failed to save node:', response.statusText);
     }
@@ -194,12 +181,11 @@ const callEditNode = async () => {
   }
 };
 
-watch(() => props.node, fetchNodeDetails(), { immediate: true });
+watch(() => props.node, initializeFields, { immediate: true });
 </script>
 
 <template>
   <ScrollArea class="h-[500px]">
-    <Card>
       <CardHeader>
         <CardTitle v-if="!isEditMode">Node Details</CardTitle>
         <CardTitle v-else>Edit Node</CardTitle>
@@ -212,12 +198,15 @@ watch(() => props.node, fetchNodeDetails(), { immediate: true });
       </CardHeader>
 
       <CardContent>
-        <div v-if="responseData">
+        <div v-if="props.node">
           <!-- Normal View -->
           <div v-if="!isEditMode">
             <ul>
               <li v-for="field in originalFields" :key="field.label">
-                <strong>{{ field.label }}:</strong> {{ field.value }}
+                <div v-if="field.label !== 'Id'" class="flex flex-col gap-2">
+                  <Label class="font-semibold mt-4">{{ field.label }}</Label>
+                  <Input v-model="field.value" disabled ></Input>
+                </div>
               </li>
             </ul>
           </div>
@@ -232,21 +221,27 @@ watch(() => props.node, fetchNodeDetails(), { immediate: true });
                 id="type"
                 class="w-full mt-2 p-2 border rounded-md"
               >
-                <option v-for="type in types" :key="type" :value="type">{{ type }}</option>
+                <option v-for="type in types" :key="type.key" :value="type.key">{{ type.label }}</option>
               </select>
             </div>
 
             <!-- Fields for the selected type -->
             <div v-for="(field, index) in fields" :key="index" class="mb-4">
-              <Label :for="'field' + index">{{ field.label }}</Label>
-              <Input
-                v-model="field.value"
-                :id="'field' + index"
-                :type="typeof field.value === 'boolean' ? 'checkbox' : 'text'"
-                class="w-full mt-2 p-2 border rounded-md"
-                :checked="field.value === true"
-                @change="field.value = $event.target.type === 'checkbox' ? $event.target.checked : $event.target.value"
-              />
+              <Label :for="'field' + index" class="font-semibold">{{ field.label }}</Label>
+              <template v-if="typeof field.value === 'boolean'">
+                <Checkbox
+                  v-model="field.value"
+                  :id="'field' + index"
+                  class="font-semibold mx-4"
+                />
+              </template>
+              <template v-else>
+                <Input
+                  v-model="field.value"
+                  :id="'field' + index"
+                  type="text"
+                />
+              </template>
             </div>
           </div>
         </div>
@@ -256,7 +251,7 @@ watch(() => props.node, fetchNodeDetails(), { immediate: true });
       </CardContent>
 
       <CardFooter>
-        <div v-if="responseData">
+        <div v-if="props.node">
           <Button
             v-if="!isEditMode"
             @click="isEditMode = true"
@@ -273,7 +268,6 @@ watch(() => props.node, fetchNodeDetails(), { immediate: true });
           </Button>
         </div>
       </CardFooter>
-    </Card>
   </ScrollArea>
 </template>
 
