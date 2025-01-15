@@ -66,7 +66,7 @@ const getIconComponent = (type: string) => {
         <div v-if="props.node.location" class="flex items-center">
           <LocationIcon width="16" height="16" class="inline-block mr-1"/>
           <p
-            class="text-sm text-gray-500"
+            class="text-sm text-gray-500 truncate max-w-56"
           >
             {{ props.node.location }}
           </p>
